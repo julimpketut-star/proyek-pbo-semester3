@@ -1,0 +1,6 @@
+# Salin file ini menjadi config/db.properties lalu isi nilai sebenarnya.
+# File config/db.properties diabaikan Git (lihat .gitignore). Jangan commit credential asli.
+
+db.url=jdbc:mysql://localhost:3306/studio_musik?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Makassar
+db.username=GANTI_DENGAN_USERNAME_MYSQL
+db.password=GANTI_DENGAN_PASSWORD_MYSQL

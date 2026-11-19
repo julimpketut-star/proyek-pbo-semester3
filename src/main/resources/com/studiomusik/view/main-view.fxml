@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox alignment="CENTER" spacing="16.0" styleClass="root-pane"
+      xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.studiomusik.controller.MainController">
+    <children>
+        <Label fx:id="appTitleLabel" styleClass="app-title" text="Studio Musik" wrapText="true" />
+        <Label fx:id="versionLabel" styleClass="app-subtitle" text="Versi" wrapText="true" />
+        <Label styleClass="starter-info"
+               text="Starter berhasil dimuat: FXML dan CSS terbaca. Fitur bisnis dikerjakan pada tahap berikutnya."
+               wrapText="true" />
+        <Button fx:id="testButton" onAction="#onTestButtonClick" styleClass="primary-button"
+                text="Uji Interaksi" />
+        <Label fx:id="statusLabel" styleClass="status-label" text="Status: menunggu klik tombol." />
+    </children>
+</VBox>

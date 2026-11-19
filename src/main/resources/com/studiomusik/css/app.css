@@ -1,0 +1,49 @@
+/* Gaya dasar aplikasi Studio Musik (STEP 1 - starter) */
+
+.root-pane {
+    -fx-background-color: linear-gradient(to bottom, #1f2937, #111827);
+    -fx-padding: 32;
+}
+
+.app-title {
+    -fx-text-fill: #f9fafb;
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-text-alignment: center;
+}
+
+.app-subtitle {
+    -fx-text-fill: #9ca3af;
+    -fx-font-size: 13px;
+    -fx-text-alignment: center;
+}
+
+.starter-info {
+    -fx-text-fill: #d1d5db;
+    -fx-font-size: 14px;
+    -fx-text-alignment: center;
+}
+
+.primary-button {
+    -fx-background-color: #6366f1;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+    -fx-padding: 10 24 10 24;
+    -fx-cursor: hand;
+}
+
+.primary-button:hover {
+    -fx-background-color: #4f46e5;
+}
+
+.status-label {
+    -fx-text-fill: #9ca3af;
+    -fx-font-size: 13px;
+}
+
+.status-label.status-ok {
+    -fx-text-fill: #34d399;
+    -fx-font-weight: bold;
+}
