@@ -97,3 +97,7 @@ AND start_time < :requestedEnd AND end_time > :requestedStart
 
 ## 7. Perubahan dari ADM TK I (ringkas)
 `password` → `password_hash`; `customer.email` NOT NULL UNIQUE; `customer.password_hash` baru; `booking.created_at` baru; unique pada pasangan `booking_instrument`; CHECK dan indeks baru; kolom status/quantity/total_cost menjadi NOT NULL. Alasan lengkap: `DECISION_LOG.md` D-002 s.d. D-004, D-020.
+
+## 8. Status implementasi (STEP 2)
+Diimplementasikan di `database/schema.sql`, `database/seed.sql`, `database/reset.sql` **tanpa mengubah** kolom, tipe, atau constraint pada §2.
+Tambahan yang tidak mengubah kontrak: constraint diberi nama (`pk_*`, `uq_*`, `fk_*`, `chk_*`, `idx_*`), collation `utf8mb4_0900_ai_ci`, dan seed memakai ID eksplisit. Skenario seed dan hasil verifikasi: `docs/STAGE2_VERIFICATION.md`. Keputusan terkait: `DECISION_LOG.md` D-023 s.d. D-027.

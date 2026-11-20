@@ -83,3 +83,26 @@ Perubahan di masa depan ditambahkan sebagai entri baru, bukan menimpa entri lama
 
 ### D-022 — Dokumen handoff
 - **Keputusan:** `PROGRESS_HANDOFF.md` adalah satu-satunya ringkasan handoff hidup lintas akun. `docs/PROJECT_HANDOFF_PBO.md` adalah konteks proyek yang statis (versi terkunci dari handoff awal) dan `PROGRESS.md` adalah log tahap singkat yang menunjuk ke `PROGRESS_HANDOFF.md`. Tidak ada file handoff lain. `DECIDED`
+
+---
+## Entri STEP 2 (2026-11-19)
+
+### D-023 — Parameter PBKDF2 dan desain utilitas hash
+- **Melengkapi D-018** (format dan algoritma tidak berubah: `pbkdf2_sha256$iter$salt$hash`, PBKDF2WithHmacSHA256, salt 16 byte `SecureRandom`, kunci 256 bit).
+- **Keputusan:** jumlah iterasi bawaan **600000** (mengikuti rekomendasi OWASP untuk PBKDF2-HMAC-SHA256); tersimpan di dalam string hash sehingga dapat dinaikkan kelak tanpa merusak hash lama. `Pbkdf2HashGenerator` tidak menerima password lewat argumen CLI (menghindari riwayat shell); input lewat konsol tersembunyi atau `--stdin`. Mode `--verify` ditambahkan untuk memeriksa hash. `PasswordUtil` (STEP 4) wajib memakai parameter dan format yang sama dan mampu membaca hash dengan iterasi berbeda. `DECIDED`
+
+### D-024 — Kredensial demo tidak disimpan di repository
+- **Konflik:** prompt STEP 2 dari handoff STEP 1 menyebut kredensial demo "ditulis di README"; instruksi STEP 2 terbaru melarang plaintext di repository.
+- **Keputusan:** mengikuti instruksi terbaru. Repository hanya berisi hash. Username/email demo (bukan rahasia) boleh tercantum; **password demo disampaikan terpisah** oleh tim. Untuk mengganti password demo: buat hash baru dengan utilitas dan ganti nilai di `seed.sql`. `DECIDED`
+
+### D-025 — Kebijakan idempotensi script SQL
+- **Keputusan:** `schema.sql` memakai `IF NOT EXISTS` (aman diulang, tidak menghapus data). `seed.sql` mengharuskan tabel kosong dan **sengaja gagal** bila dijalankan lagi tanpa reset (error duplikat), agar data tidak ganda diam-diam. `reset.sql` hanya `DROP TABLE` (urutan anak → induk) dan tidak menghapus database `studio_musik`. Alur ulang resmi: `reset.sql` → `schema.sql` → `seed.sql`. `DECIDED`
+
+### D-026 — Skrip verifikasi otomatis (file tambahan)
+- **Keputusan:** menambah `database/tests/verify_stage2.sql` (di luar daftar file wajib prompt) agar bukti uji dapat diulang oleh siapa pun. Skrip memakai database sementara `studio_musik_verify_tmp` (dihapus di akhir) dan membungkus uji destruktif dalam transaksi + `ROLLBACK`. Tidak mengubah kontrak. `DECIDED`
+
+### D-027 — Tanggal tetap pada seed
+- **Keputusan:** booking seed memakai tanggal tetap (10 Nov dan 1–5 Des 2026) supaya skenario overlap deterministik. Booking COMPLETED berada di masa lalu; booking uji lain pada Desember 2026. Setelah tanggal-tanggal itu lewat, data tetap valid sebagai data historis; uji Service yang membuat booking baru (BR-21) harus memakai tanggal relatif terhadap hari ini atau tanggal yang jelas di masa depan, bukan tanggal seed. `DECIDED`
+
+### D-028 — Perubahan status D-021 (versi dependency)
+- **Keputusan:** build lokal pengguna pada 2026-11-19 (`mvn clean test` dan `mvn package` sukses dengan versi yang dikunci) membuktikan dependency terunduh dan versi dapat diresolusi. Tidak ada perubahan versi. `DECIDED`
