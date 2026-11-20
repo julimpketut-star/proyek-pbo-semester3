@@ -1,8 +1,41 @@
 # STAGE 1 VERIFICATION — Maven Project Setup
 
+**Status akhir STEP 1: SELESAI** — gerbang verifikasi lokal lulus pada 2026-11-19 (lihat bagian 0). Bagian 1–5 adalah catatan verifikasi awal di sandbox Claude (2026-11-18) dan dipertahankan sebagai riwayat.
+
+## 0. Bukti Verifikasi Lokal (2026-11-19) — dari pengguna
+
+Sumber: dua screenshot terminal VS Code milik pengguna (Windows, folder `...\Project TK II\studio-musik`, branch Git aktif `feature/database`, status bar "Java: Ready", 0 error / 0 warning).
+
+| Perintah | Bukti pada screenshot | Hasil |
+|---|---|---|
+| `mvn clean test` | `Tests run: 5, Failures: 0, Errors: 0, Skipped: 0` untuk `com.studiomusik.AppInfoTest`; `BUILD SUCCESS`; total 26.342 s; selesai 2026-11-19T11:50:05+08:00 | **Lulus** |
+| `mvn package` | Unduhan dari Maven Central berhasil; `Building jar: ...\target\studio-musik-app-1.0.0-SNAPSHOT.jar`; `BUILD SUCCESS`; total 21.224 s; selesai 2026-11-19T11:51:09+08:00 | **Lulus** |
+| `mvn clean javafx:run` | Dilaporkan pengguna berhasil (aplikasi tampil di VS Code). **Tidak ada screenshot** pada percakapan ini | Dilaporkan pengguna |
+| Tombol "Uji Interaksi" | Kolom hasil pada prompt dibiarkan placeholder `[BERHASIL/GAGAL]` | **Belum dikonfirmasi** |
+
+Catatan: bagian awal output `mvn clean test` (fase `clean`) tidak terlihat pada screenshot karena terpotong; perintah dijalankan sebagai `mvn clean test` dan berakhir `BUILD SUCCESS`.
+
+### Status AC-B setelah bukti lokal
+| ID | Status | Keterangan |
+|---|---|---|
+| AC-B01 | Terpenuhi secara tidak langsung | Output `java -version` tidak ditampilkan, tetapi Maven mengompilasi dengan `release 21` hingga `BUILD SUCCESS`, sehingga JDK yang dipakai Maven minimal 21 |
+| AC-B02 | Lulus | `mvn clean test` berhasil |
+| AC-B03 | Lulus | Build berhasil dengan dependency terkunci (JavaFX 21.0.5, Connector/J 8.4.0, JUnit 5.10.2); unduhan terlihat pada `mvn package` |
+| AC-B04 | Lulus | 5 tes, 0 gagal |
+| AC-B05 | Lulus | JAR `studio-musik-app-1.0.0-SNAPSHOT.jar` terbentuk |
+| AC-B06 | Dilaporkan pengguna | Tanpa screenshot |
+| AC-B07 | Sebagian | Tampilan/CSS dilaporkan berhasil tampil; tombol belum dikonfirmasi |
+| AC-B08 | Lulus | Pemeriksaan file (STEP 1) |
+
+**Tindak lanjut ringan (tidak menghambat STEP 3):** klik tombol "Uji Interaksi" sekali dan ambil screenshot jendela untuk lampiran laporan.
+
+---
+
+## Riwayat: Verifikasi Awal di Sandbox (2026-11-18)
+
 Tanggal: 2026-11-18 · Lingkungan: sandbox Linux (Ubuntu 24.04) milik Claude, **tanpa akses ke Maven Central** (`repo.maven.apache.org` → *Unknown host*).
 
-> **Kesimpulan jujur:** Perintah Maven yang diminta (`mvn clean/test/package/javafx:run`) **TIDAK berhasil di sandbox** karena Maven tidak dapat mengunduh plugin dan dependency. Itu keterbatasan jaringan sandbox, bukan error yang terdeteksi pada proyek. Yang terbukti hanya verifikasi **parsial** (bagian 3). Verifikasi penuh harus dijalankan di VS Code/komputer lokal Anda (bagian 4).
+> **Kesimpulan jujur (kondisi saat itu):** Perintah Maven yang diminta (`mvn clean/test/package/javafx:run`) **TIDAK berhasil di sandbox** karena Maven tidak dapat mengunduh plugin dan dependency. Itu keterbatasan jaringan sandbox, bukan error yang terdeteksi pada proyek. Yang terbukti hanya verifikasi **parsial** (bagian 3). Verifikasi penuh harus dijalankan di VS Code/komputer lokal Anda (bagian 4).
 
 ## 1. Hasil perintah yang diminta (aktual)
 
@@ -56,7 +89,7 @@ mvn clean javafx:run
 ```
 Ekspektasi: `mvn test` → `Tests run: 5, Failures: 0`; `mvn package` → `target/studio-musik-app-1.0.0-SNAPSHOT.jar`; `javafx:run` → jendela gelap bertombol ungu "Uji Interaksi"; setiap klik mengubah label status menjadi hijau "Tombol berfungsi. Jumlah klik: N".
 
-**Jika unduhan versi gagal** (artefak/versi tidak ditemukan): jalankan `mvn dependency:resolve`, lihat versi mana yang gagal, ganti hanya properti versi di `pom.xml` (`javafx.version`, `mysql.connector.version`, `junit.version`, dst.) dengan versi stabil 21.x/8.4.x/5.10.x yang tersedia, lalu catat di `DECISION_LOG.md` (entri baru, mis. D-023). Jangan memakai beta/snapshot.
+**Jika unduhan versi gagal** (artefak/versi tidak ditemukan): jalankan `mvn dependency:resolve`, lihat versi mana yang gagal, ganti hanya properti versi di `pom.xml` (`javafx.version`, `mysql.connector.version`, `junit.version`, dst.) dengan versi stabil 21.x/8.4.x/5.10.x yang tersedia, lalu catat di `DECISION_LOG.md` (entri baru berikutnya). Jangan memakai beta/snapshot.
 
 Centang saat selesai (isi dengan bukti/screenshot):
 - [ ] `mvn clean` sukses
