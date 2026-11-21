@@ -106,3 +106,30 @@ Perubahan di masa depan ditambahkan sebagai entri baru, bukan menimpa entri lama
 
 ### D-028 — Perubahan status D-021 (versi dependency)
 - **Keputusan:** build lokal pengguna pada 2026-11-19 (`mvn clean test` dan `mvn package` sukses dengan versi yang dikunci) membuktikan dependency terunduh dan versi dapat diresolusi. Tidak ada perubahan versi. `DECIDED`
+
+---
+## Entri STEP 3 (2026-11-19)
+
+### D-029 — Konvensi pelanggaran invariant di Model dan semantik enum
+- **Keputusan:** Model hanya menjaga invariant yang murni dan murah. Argumen tidak valid → `IllegalArgumentException` (mis. harga/jam negatif, `quantity < 1`, jam negatif); `null` pada objek wajib (status enum, harga `BigDecimal`, instrument pada detail) → `NullPointerException` lewat `Objects.requireNonNull`; keadaan objek yang tidak memungkinkan perhitungan (waktu kosong, `end <= start`, menit bukan 00, room kosong) → `IllegalStateException`. Validasi input pengguna (string kosong, format email, dst.) tetap tugas Service. Service menerjemahkan exception model ke `ValidationException`/`BusinessRuleException` (D-017); model tidak mengenal exception milik Service.
+- `BookingStatus.canTransitionTo`: perpindahan ke status yang sama dan ke `null` bernilai `false`. `blocksSchedule()` hanya `true` untuk PENDING dan CONFIRMED. `DECIDED`
+
+### D-030 — `Booking.addInstrument` / `removeInstrument` sebagai pertahanan berlapis
+- **Keputusan:** `addInstrument(Instrument, int)` menolak (`IllegalArgumentException`): instrument `null`, `quantity < 1` (BR-18), instrument `MAINTENANCE` (BR-06), dan instrument yang sama berdasarkan `instrumentId` (BR-17). `removeInstrument(int)` menolak id yang tidak ada pada booking. Service **tetap** wajib memeriksa aturan yang sama terlebih dulu agar pesan ke pengguna ramah dan agar aturan tidak bergantung pada model. Detail yang dimuat DAO dari database tidak lewat `addInstrument` (memakai konstruktor `BookingInstrument` dan `setInstruments`), sehingga alat yang kini MAINTENANCE pada booking lama tetap dapat dimuat. `DECIDED`
+- Catatan uji: penghapusan cek `quantity < 1` di `addInstrument` tidak terdeteksi oleh tes karena konstruktor `BookingInstrument` menegakkan aturan yang sama (mutan setara), bukan celah tes.
+
+### D-031 — Snapshot harga bersifat tidak dapat diubah (BR-12)
+- **Keputusan:** pada `BookingInstrument`, `rentalPrice` dan `instrument` adalah field `final` tanpa setter. Hanya `quantity` (setter memvalidasi ≥ 1), `bookingInstrumentId`, dan `bookingId` yang dapat diubah. `Booking.addInstrument` mengisi `rentalPrice` dari `instrument.getRentalPrice()` saat itu. Ini memperjelas API_CONTRACTS §1.3 tanpa mengubah nama atau tipe atribut. `DECIDED`
+
+### D-032 — Perilaku `calculateDuration()` dan `calculateTotalCost()`
+- **Keputusan:** `calculateDuration()` mengembalikan jam bulat dan melempar `IllegalStateException` bila waktu kosong, `end <= start` (BR-03), atau mulai/selesai tidak tepat pada jam (BR-04, A-05). Data lama di database yang menyimpan waktu tidak bulat akan gagal dihitung secara eksplisit (bukan dibulatkan diam-diam); Service/Controller tidak boleh memanggilnya untuk baris seperti itu tanpa penanganan. `calculateTotalCost()` bersifat murni (tidak mengubah field `totalCost`; Service yang memanggil `setTotalCost`), membulatkan **per komponen** (biaya ruangan dan tiap subtotal) dengan HALF_UP skala 2 lalu menjumlahkannya, dan memastikan hasil berskala 2. `DECIDED`
+
+### D-033 — Komposisi Booking–BookingInstrument di memori
+- **Keputusan:** `Booking.getInstruments()` mengembalikan tampilan baca-saja (`Collections.unmodifiableList`); perubahan hanya lewat `addInstrument`, `removeInstrument`, atau `setInstruments(List)` (menyalin list, menggantikan isi lama, dipakai DAO setelah JOIN). `setBookingId(int)` menyebarkan id ke seluruh detail agar detail mengikuti identitas induknya. `DECIDED`
+
+### D-034 — Konstruktor dan method tambahan di luar contoh signature
+- **Keputusan (aditif, tidak mengubah nama/tipe yang dikunci):** konstruktor lengkap untuk `Room(int,String,String,BigDecimal,RoomStatus)`, `Instrument(int,String,String,BigDecimal,InstrumentStatus)`, `BookingInstrument(int,int,Instrument,int,BigDecimal)`, dan `Booking(int,Customer,Room,LocalDate,LocalTime,LocalTime,BookingStatus,BigDecimal,LocalDateTime)` untuk dipakai DAO; konstruktor kenyamanan `Booking(Customer,Room,LocalDate,LocalTime,LocalTime)` untuk booking baru (id 0, status PENDING sesuai BR-13, total `0.00`, `createdAt` null). `id = 0` berarti belum disimpan. Getter/setter standar untuk semua atribut kecuali yang dibatasi pada D-031 dan D-033. Sengaja **tidak** ada `equals/hashCode/toString` (tidak dibutuhkan; juga mencegah `passwordHash` bocor lewat `toString` otomatis). `DECIDED`
+
+### D-035 — Pembagian util per tahap
+- **Konteks:** judul tahap "Util JDBC & DAO" tidak merinci util mana. Lima util pada API_CONTRACTS §2 punya kebutuhan berbeda.
+- **Keputusan:** STEP 4 mengerjakan `DatabaseConnection`, `PasswordUtil` (kompatibel dengan `database/tools/Pbkdf2HashGenerator.java`), dan enam DAO. `DateTimeUtil` dikerjakan pada STEP 5 (Service; validasi waktu dan overlap), `CurrencyUtil` dan `SessionManager` pada STEP 6–7 (GUI/Controller), yaitu tahap pertama yang memakainya. `DECIDED`

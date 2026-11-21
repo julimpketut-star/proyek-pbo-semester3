@@ -33,6 +33,28 @@
 | AC-M04 | Semua uang `BigDecimal`, pembulatan `HALF_UP` skala 2 | Unit test |
 | AC-M05 | Tujuh konsep PBO dapat ditunjuk ke class/method nyata | Tabel di laporan |
 
+### Status AC-M (STEP 3, 2026-11-19)
+Bukti: 79 tes (74 baru + 5 lama) lulus lewat `javac` + JUnit console di sandbox; **`mvn clean test` belum dijalankan** (Maven tidak dapat mengunduh dependency di sandbox) dan menunggu konfirmasi pengguna secara lokal. Rincian: `docs/STAGE3_VERIFICATION.md`.
+
+| ID | Status | Bukti |
+|---|---|---|
+| AC-M01 | **Lulus (sandbox)** | `javac` menolak `new Person(...)`: *"Person is abstract; cannot be instantiated"*. Tes: `PersonHierarchyTest.personIsAbstractAndDeclaresAbstractGetRole`, `personCannotBeInstantiatedEvenViaReflection` |
+| AC-M02 | **Lulus (sandbox)** | `PersonHierarchyTest.getRoleIsPolymorphicThroughPersonReference`, `customerAndAdminOverrideGetRoleThemselves`; `OopConceptsTest.polymorphism_*` |
+| AC-M03 | **Lulus (sandbox)** | `BookingTest.exampleFromContractRoom100kTwoHoursPlusTwoInstrumentsAt25kIs250k` (= `250000.00`), `sameTotalWhenTwoDifferentInstrumentsAreUsedOnceEach`, `reproducesSeedTotalsFromDatabaseContract` (400000, 470000, 496000 sama dengan seed) |
+| AC-M04 | **Lulus (sandbox)** | `RoomTest.costUsesHalfUpRoundingOnExactDecimals`, `InstrumentTest.costUsesHalfUpRounding`, `BookingInstrumentTest.subtotalIsBigDecimalWithScaleTwoAndHalfUp`, `BookingTest.totalIsBigDecimalWithScaleTwo`, `totalRoundsEachComponentHalfUpThenSums`; tipe kembalian `BigDecimal` diperiksa lewat refleksi; tidak ada `double`/`float` di package model |
+| AC-M05 | **Lulus (sandbox)** | Tabel di bawah; setiap konsep dibuktikan oleh tes perilaku di `OopConceptsTest` |
+
+### Pemetaan tujuh konsep PBO ke kode nyata (AC-M05)
+| Konsep | Class / method nyata | Bukti perilaku (tes) |
+|---|---|---|
+| Encapsulation | Semua field instance di `Person`, `Customer`, `Admin`, `Room`, `Instrument`, `BookingInstrument`, `Booking` bersifat `private`. Invariant dijaga setter/konstruktor (mis. `BookingInstrument.setQuantity` menolak < 1); `Booking.getInstruments()` hanya tampilan baca-saja | `OopConceptsTest.encapsulation_everyInstanceFieldOfEveryModelClassIsPrivate`, `encapsulation_stateIsReachedOnlyThroughMethodsThatEnforceInvariants` |
+| Abstraction | `abstract class Person` dengan `public abstract String getRole()` | `OopConceptsTest.abstraction_*`; `javac` menolak `new Person(...)` |
+| Inheritance | `Customer extends Person`, `Admin extends Person`; `getName()` dll. diwarisi (dideklarasikan di `Person`) | `OopConceptsTest.inheritance_*` |
+| Polymorphism | `Customer.getRole()` → "Customer", `Admin.getRole()` → "Admin", dipanggil lewat referensi `Person` (override sungguhan: dideklarasikan di subclass) | `OopConceptsTest.polymorphism_*`, `PersonHierarchyTest.getRoleIsPolymorphicThroughPersonReference` |
+| Association | `Booking` → `Customer` dan `Room` (`getCustomer()`, `getRoom()`; 1 Customer : N Booking); `BookingInstrument` → `Instrument` (many-to-many lewat `Booking.addInstrument`) | `OopConceptsTest.association_*` |
+| Composition | `Booking` membuat dan memiliki `BookingInstrument` (`addInstrument`), daftar internalnya tidak dapat dimodifikasi dari luar, `setBookingId` menyebar ke detail, total induk dihitung dari bagian-bagiannya | `OopConceptsTest.composition_*`, `BookingTest.setBookingIdPropagatesToExistingAndFutureDetails`, `getInstrumentsIsAnUnmodifiableView` |
+| Enumeration | `BookingStatus` (dengan `blocksSchedule()` dan `canTransitionTo()`), `RoomStatus`, `InstrumentStatus`; field status bertipe enum | `OopConceptsTest.enumeration_*`, `BookingStatusTest` (16 kombinasi transisi) |
+
 ## D. Aturan Bisnis (STEP 5) — setiap BR minimal satu tes
 | ID | Kriteria | BR |
 |---|---|---|

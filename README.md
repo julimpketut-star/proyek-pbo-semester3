@@ -11,9 +11,10 @@ Aplikasi **desktop** (bukan website) untuk mengelola operasional satu studio mus
 | STEP 0 | Spesifikasi final dan kontrak (`docs/`) | Selesai |
 | STEP 1 | Scaffold Maven + starter JavaFX | **Selesai** — `mvn clean test` (5 tes) dan `mvn package` lulus di lokal (lihat `docs/STAGE1_VERIFICATION.md`) |
 | STEP 2 | Skema, seed, reset, utilitas hash, konfigurasi DB | **Selesai** — 57/57 uji lulus di MySQL 8.0.46 sandbox; verifikasi di MySQL lokal masih dianjurkan (`docs/STAGE2_VERIFICATION.md` §7) |
-| STEP 3+ | Model, DAO, service, GUI | Belum dikerjakan |
+| STEP 3 | Model dan Enum (`com.studiomusik.model`, `model.enums`) + 74 unit test baru | **Selesai di sandbox** — 79/79 tes lulus (javac + JUnit console); `mvn clean test` lokal menunggu Anda (`docs/STAGE3_VERIFICATION.md` §6) |
+| STEP 4+ | Util JDBC, DAO, service, GUI | Belum dikerjakan |
 
-Fitur bisnis (login, booking, CRUD) **belum ada**. Aplikasi saat ini hanya menampilkan jendela starter; database sudah siap dipakai pada tahap berikutnya.
+Fitur bisnis (login, booking, CRUD) **belum ada**. Aplikasi saat ini hanya menampilkan jendela starter. Database dan class Model/Enum sudah siap; DAO dan Service dikerjakan pada tahap berikutnya.
 
 ## Prasyarat
 1. **JDK 21** (mis. Temurin 21). Cek: `java -version` dan `javac -version` harus menunjukkan 21.
@@ -46,7 +47,9 @@ studio-musik/
 └── src/
     ├── main/java/com/studiomusik/
     │   ├── MainApp.java, AppInfo.java
-    │   ├── controller/  model/  model/enums/  dao/  service/  util/
+    │   ├── model/ (Person, Customer, Admin, Room, Instrument, Booking, BookingInstrument)
+    │   ├── model/enums/ (BookingStatus, RoomStatus, InstrumentStatus)
+    │   ├── controller/  dao/  service/  util/   (dao, service, util masih kosong)
     ├── main/resources/com/studiomusik/{view,css}/
     └── test/java/com/studiomusik/
 ```
