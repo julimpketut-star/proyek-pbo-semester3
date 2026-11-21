@@ -68,6 +68,33 @@ public class Booking {
 ```
 Catatan: `checkAvailability()` dan `saveBooking()` dari Class Diagram **tidak** ada di model; lihat D-013.
 
+### 1.4 Perilaku dan konstruktor model (diimplementasi STEP 3; keputusan D-029…D-034)
+Aditif terhadap §1.1–1.3; nama dan tipe atribut/method di atas tidak berubah.
+```java
+// Konstruktor (id = 0 berarti belum disimpan)
+Room(int roomId, String roomName, String roomType, BigDecimal pricePerHour, RoomStatus status)
+Instrument(int instrumentId, String name, String type, BigDecimal rentalPrice, InstrumentStatus status)
+BookingInstrument(int bookingInstrumentId, int bookingId, Instrument instrument, int quantity, BigDecimal rentalPrice)
+Booking(int bookingId, Customer customer, Room room, LocalDate bookingDate, LocalTime startTime, LocalTime endTime,
+        BookingStatus status, BigDecimal totalCost, LocalDateTime createdAt)      // dipakai DAO
+Booking(Customer customer, Room room, LocalDate bookingDate, LocalTime startTime, LocalTime endTime) // booking baru: PENDING, total 0.00
+
+// Tambahan pada Booking
+List<BookingInstrument> getInstruments();                     // tampilan baca-saja
+void setInstruments(List<BookingInstrument> details);         // menyalin list; dipakai DAO
+void setBookingId(int bookingId);                             // juga menyetel bookingId semua detail
+```
+| Hal | Perilaku |
+|---|---|
+| `BookingInstrument.rentalPrice`, `.instrument` | `final`, tanpa setter (snapshot BR-12). `setQuantity` menolak `< 1`. |
+| `Room/Instrument.calculateCost(n)` | `n < 0` → `IllegalArgumentException`; hasil skala 2, `HALF_UP`. |
+| `Booking.calculateDuration()` | jam bulat; `IllegalStateException` bila waktu kosong, `end <= start`, atau menit bukan 00. |
+| `Booking.calculateTotalCost()` | murni (tidak mengubah `totalCost`); pembulatan per komponen lalu dijumlah; skala 2. |
+| `Booking.addInstrument(i, q)` | `IllegalArgumentException` bila `i == null`, `q < 1`, `i` MAINTENANCE, atau `instrumentId` sudah ada. |
+| `Booking.removeInstrument(id)` | `IllegalArgumentException` bila tidak ada. |
+| `BookingStatus.canTransitionTo(next)` | BR-14; status sama dan `null` → `false`. |
+| Null pada objek wajib | `NullPointerException` (status enum, harga, instrument pada detail). |
+
 ## 2. Util (`com.studiomusik.util`)
 ```java
 public final class DatabaseConnection { public static Connection getConnection() throws SQLException; } // baca config/db.properties

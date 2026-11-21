@@ -1,6 +1,20 @@
-# Salin file ini menjadi config/db.properties lalu isi nilai sebenarnya.
-# File config/db.properties diabaikan Git (lihat .gitignore). Jangan commit credential asli.
+# ---------------------------------------------------------------------------
+# Konfigurasi koneksi database (TEMPLAT)
+#
+# Cara pakai:
+#   1. Salin file ini menjadi config/db.properties
+#        Windows PowerShell : Copy-Item config\db.properties.example config\db.properties
+#        macOS / Linux      : cp config/db.properties.example config/db.properties
+#   2. Ganti db.username dan db.password dengan akun MySQL LOKAL Anda.
+#   3. Jangan commit config/db.properties (sudah diabaikan oleh .gitignore).
+#
+# File ini hanya berisi placeholder. Jangan menaruh credential asli di sini.
+# Kelas Java yang membaca konfigurasi ini (DatabaseConnection) dibuat pada STEP 4.
+# ---------------------------------------------------------------------------
 
 db.url=jdbc:mysql://localhost:3306/studio_musik?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Makassar
 db.username=GANTI_DENGAN_USERNAME_MYSQL
 db.password=GANTI_DENGAN_PASSWORD_MYSQL
+
+# Jika kelak muncul error "Public Key Retrieval is not allowed" pada MySQL 8 lokal,
+# tambahkan &allowPublicKeyRetrieval=true di akhir db.url (hanya untuk pengembangan lokal).

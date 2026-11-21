@@ -83,3 +83,53 @@ Perubahan di masa depan ditambahkan sebagai entri baru, bukan menimpa entri lama
 
 ### D-022 — Dokumen handoff
 - **Keputusan:** `PROGRESS_HANDOFF.md` adalah satu-satunya ringkasan handoff hidup lintas akun. `docs/PROJECT_HANDOFF_PBO.md` adalah konteks proyek yang statis (versi terkunci dari handoff awal) dan `PROGRESS.md` adalah log tahap singkat yang menunjuk ke `PROGRESS_HANDOFF.md`. Tidak ada file handoff lain. `DECIDED`
+
+---
+## Entri STEP 2 (2026-11-19)
+
+### D-023 — Parameter PBKDF2 dan desain utilitas hash
+- **Melengkapi D-018** (format dan algoritma tidak berubah: `pbkdf2_sha256$iter$salt$hash`, PBKDF2WithHmacSHA256, salt 16 byte `SecureRandom`, kunci 256 bit).
+- **Keputusan:** jumlah iterasi bawaan **600000** (mengikuti rekomendasi OWASP untuk PBKDF2-HMAC-SHA256); tersimpan di dalam string hash sehingga dapat dinaikkan kelak tanpa merusak hash lama. `Pbkdf2HashGenerator` tidak menerima password lewat argumen CLI (menghindari riwayat shell); input lewat konsol tersembunyi atau `--stdin`. Mode `--verify` ditambahkan untuk memeriksa hash. `PasswordUtil` (STEP 4) wajib memakai parameter dan format yang sama dan mampu membaca hash dengan iterasi berbeda. `DECIDED`
+
+### D-024 — Kredensial demo tidak disimpan di repository
+- **Konflik:** prompt STEP 2 dari handoff STEP 1 menyebut kredensial demo "ditulis di README"; instruksi STEP 2 terbaru melarang plaintext di repository.
+- **Keputusan:** mengikuti instruksi terbaru. Repository hanya berisi hash. Username/email demo (bukan rahasia) boleh tercantum; **password demo disampaikan terpisah** oleh tim. Untuk mengganti password demo: buat hash baru dengan utilitas dan ganti nilai di `seed.sql`. `DECIDED`
+
+### D-025 — Kebijakan idempotensi script SQL
+- **Keputusan:** `schema.sql` memakai `IF NOT EXISTS` (aman diulang, tidak menghapus data). `seed.sql` mengharuskan tabel kosong dan **sengaja gagal** bila dijalankan lagi tanpa reset (error duplikat), agar data tidak ganda diam-diam. `reset.sql` hanya `DROP TABLE` (urutan anak → induk) dan tidak menghapus database `studio_musik`. Alur ulang resmi: `reset.sql` → `schema.sql` → `seed.sql`. `DECIDED`
+
+### D-026 — Skrip verifikasi otomatis (file tambahan)
+- **Keputusan:** menambah `database/tests/verify_stage2.sql` (di luar daftar file wajib prompt) agar bukti uji dapat diulang oleh siapa pun. Skrip memakai database sementara `studio_musik_verify_tmp` (dihapus di akhir) dan membungkus uji destruktif dalam transaksi + `ROLLBACK`. Tidak mengubah kontrak. `DECIDED`
+
+### D-027 — Tanggal tetap pada seed
+- **Keputusan:** booking seed memakai tanggal tetap (10 Nov dan 1–5 Des 2026) supaya skenario overlap deterministik. Booking COMPLETED berada di masa lalu; booking uji lain pada Desember 2026. Setelah tanggal-tanggal itu lewat, data tetap valid sebagai data historis; uji Service yang membuat booking baru (BR-21) harus memakai tanggal relatif terhadap hari ini atau tanggal yang jelas di masa depan, bukan tanggal seed. `DECIDED`
+
+### D-028 — Perubahan status D-021 (versi dependency)
+- **Keputusan:** build lokal pengguna pada 2026-11-19 (`mvn clean test` dan `mvn package` sukses dengan versi yang dikunci) membuktikan dependency terunduh dan versi dapat diresolusi. Tidak ada perubahan versi. `DECIDED`
+
+---
+## Entri STEP 3 (2026-11-19)
+
+### D-029 — Konvensi pelanggaran invariant di Model dan semantik enum
+- **Keputusan:** Model hanya menjaga invariant yang murni dan murah. Argumen tidak valid → `IllegalArgumentException` (mis. harga/jam negatif, `quantity < 1`, jam negatif); `null` pada objek wajib (status enum, harga `BigDecimal`, instrument pada detail) → `NullPointerException` lewat `Objects.requireNonNull`; keadaan objek yang tidak memungkinkan perhitungan (waktu kosong, `end <= start`, menit bukan 00, room kosong) → `IllegalStateException`. Validasi input pengguna (string kosong, format email, dst.) tetap tugas Service. Service menerjemahkan exception model ke `ValidationException`/`BusinessRuleException` (D-017); model tidak mengenal exception milik Service.
+- `BookingStatus.canTransitionTo`: perpindahan ke status yang sama dan ke `null` bernilai `false`. `blocksSchedule()` hanya `true` untuk PENDING dan CONFIRMED. `DECIDED`
+
+### D-030 — `Booking.addInstrument` / `removeInstrument` sebagai pertahanan berlapis
+- **Keputusan:** `addInstrument(Instrument, int)` menolak (`IllegalArgumentException`): instrument `null`, `quantity < 1` (BR-18), instrument `MAINTENANCE` (BR-06), dan instrument yang sama berdasarkan `instrumentId` (BR-17). `removeInstrument(int)` menolak id yang tidak ada pada booking. Service **tetap** wajib memeriksa aturan yang sama terlebih dulu agar pesan ke pengguna ramah dan agar aturan tidak bergantung pada model. Detail yang dimuat DAO dari database tidak lewat `addInstrument` (memakai konstruktor `BookingInstrument` dan `setInstruments`), sehingga alat yang kini MAINTENANCE pada booking lama tetap dapat dimuat. `DECIDED`
+- Catatan uji: penghapusan cek `quantity < 1` di `addInstrument` tidak terdeteksi oleh tes karena konstruktor `BookingInstrument` menegakkan aturan yang sama (mutan setara), bukan celah tes.
+
+### D-031 — Snapshot harga bersifat tidak dapat diubah (BR-12)
+- **Keputusan:** pada `BookingInstrument`, `rentalPrice` dan `instrument` adalah field `final` tanpa setter. Hanya `quantity` (setter memvalidasi ≥ 1), `bookingInstrumentId`, dan `bookingId` yang dapat diubah. `Booking.addInstrument` mengisi `rentalPrice` dari `instrument.getRentalPrice()` saat itu. Ini memperjelas API_CONTRACTS §1.3 tanpa mengubah nama atau tipe atribut. `DECIDED`
+
+### D-032 — Perilaku `calculateDuration()` dan `calculateTotalCost()`
+- **Keputusan:** `calculateDuration()` mengembalikan jam bulat dan melempar `IllegalStateException` bila waktu kosong, `end <= start` (BR-03), atau mulai/selesai tidak tepat pada jam (BR-04, A-05). Data lama di database yang menyimpan waktu tidak bulat akan gagal dihitung secara eksplisit (bukan dibulatkan diam-diam); Service/Controller tidak boleh memanggilnya untuk baris seperti itu tanpa penanganan. `calculateTotalCost()` bersifat murni (tidak mengubah field `totalCost`; Service yang memanggil `setTotalCost`), membulatkan **per komponen** (biaya ruangan dan tiap subtotal) dengan HALF_UP skala 2 lalu menjumlahkannya, dan memastikan hasil berskala 2. `DECIDED`
+
+### D-033 — Komposisi Booking–BookingInstrument di memori
+- **Keputusan:** `Booking.getInstruments()` mengembalikan tampilan baca-saja (`Collections.unmodifiableList`); perubahan hanya lewat `addInstrument`, `removeInstrument`, atau `setInstruments(List)` (menyalin list, menggantikan isi lama, dipakai DAO setelah JOIN). `setBookingId(int)` menyebarkan id ke seluruh detail agar detail mengikuti identitas induknya. `DECIDED`
+
+### D-034 — Konstruktor dan method tambahan di luar contoh signature
+- **Keputusan (aditif, tidak mengubah nama/tipe yang dikunci):** konstruktor lengkap untuk `Room(int,String,String,BigDecimal,RoomStatus)`, `Instrument(int,String,String,BigDecimal,InstrumentStatus)`, `BookingInstrument(int,int,Instrument,int,BigDecimal)`, dan `Booking(int,Customer,Room,LocalDate,LocalTime,LocalTime,BookingStatus,BigDecimal,LocalDateTime)` untuk dipakai DAO; konstruktor kenyamanan `Booking(Customer,Room,LocalDate,LocalTime,LocalTime)` untuk booking baru (id 0, status PENDING sesuai BR-13, total `0.00`, `createdAt` null). `id = 0` berarti belum disimpan. Getter/setter standar untuk semua atribut kecuali yang dibatasi pada D-031 dan D-033. Sengaja **tidak** ada `equals/hashCode/toString` (tidak dibutuhkan; juga mencegah `passwordHash` bocor lewat `toString` otomatis). `DECIDED`
+
+### D-035 — Pembagian util per tahap
+- **Konteks:** judul tahap "Util JDBC & DAO" tidak merinci util mana. Lima util pada API_CONTRACTS §2 punya kebutuhan berbeda.
+- **Keputusan:** STEP 4 mengerjakan `DatabaseConnection`, `PasswordUtil` (kompatibel dengan `database/tools/Pbkdf2HashGenerator.java`), dan enam DAO. `DateTimeUtil` dikerjakan pada STEP 5 (Service; validasi waktu dan overlap), `CurrencyUtil` dan `SessionManager` pada STEP 6–7 (GUI/Controller), yaitu tahap pertama yang memakainya. `DECIDED`

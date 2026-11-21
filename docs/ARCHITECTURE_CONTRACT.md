@@ -23,7 +23,10 @@ studio-musik/
 ├── pom.xml  README.md  PROGRESS.md  PROGRESS_HANDOFF.md  .gitignore
 ├── .vscode/extensions.json
 ├── config/db.properties.example            (db.properties lokal, di-ignore Git)
-├── database/schema.sql seed.sql reset.sql  (STEP 2)
+├── database/                               (STEP 2)
+│   ├── schema.sql  seed.sql  reset.sql
+│   ├── tools/Pbkdf2HashGenerator.java      (utilitas mandiri, JDK saja)
+│   └── tests/verify_stage2.sql             (verifikasi otomatis struktur/constraint/seed/overlap)
 ├── docs/
 └── src/
     ├── main/java/com/studiomusik/
