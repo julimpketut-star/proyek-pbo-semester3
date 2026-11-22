@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<!-- SONORA - Registrasi Customer. Controller: STEP 7. -->
+<ScrollPane fx:id="rootPane" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" styleClass="scroll-transparent, auth-backdrop"
+            xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.studiomusik.controller.RegisterController">
+    <content>
+        <StackPane styleClass="auth-backdrop">
+            <padding>
+                <Insets bottom="32.0" left="32.0" right="32.0" top="32.0" />
+            </padding>
+            <children>
+                <VBox alignment="TOP_LEFT" maxWidth="460.0" spacing="14.0" styleClass="auth-card" StackPane.alignment="CENTER">
+                    <children>
+                        <VBox spacing="0.0">
+                            <children>
+                                <HBox alignment="BOTTOM_LEFT" spacing="0.0">
+                                    <children>
+                                        <Label styleClass="logo-sono, on-light" text="SONO" />
+                                        <Label styleClass="logo-ra" text="RA" />
+                                    </children>
+                                </HBox>
+                                <Label styleClass="logo-tagline, on-light" text="MUSIC STUDIO &amp; RENT" />
+                            </children>
+                        </VBox>
+                        <VBox spacing="4.0">
+                            <children>
+                                <Label styleClass="page-title" text="Daftar Customer" />
+                                <Label styleClass="section-subtitle" text="Buat akun untuk memesan studio dan memantau booking." wrapText="true" />
+                            </children>
+                        </VBox>
+
+                        <Label fx:id="messageLabel" managed="false" maxWidth="Infinity" styleClass="message-area, message-error" visible="false" wrapText="true" />
+
+                        <VBox spacing="4.0">
+                            <children>
+                                <Label styleClass="form-label" text="NAMA LENGKAP" />
+                                <TextField fx:id="nameField" promptText="Nama lengkap" />
+                            </children>
+                        </VBox>
+                        <VBox spacing="4.0">
+                            <children>
+                                <Label styleClass="form-label" text="NOMOR TELEPON" />
+                                <TextField fx:id="phoneField" promptText="Contoh: 081234567890" />
+                            </children>
+                        </VBox>
+                        <VBox spacing="4.0">
+                            <children>
+                                <Label styleClass="form-label" text="EMAIL" />
+                                <TextField fx:id="emailField" promptText="email@contoh.com" />
+                            </children>
+                        </VBox>
+                        <VBox spacing="4.0">
+                            <children>
+                                <Label styleClass="form-label" text="PASSWORD" />
+                                <PasswordField fx:id="passwordField" promptText="Password" />
+                                <Label styleClass="caption" text="Panjang password 8–128 karakter." />
+                            </children>
+                        </VBox>
+                        <VBox spacing="4.0">
+                            <children>
+                                <Label styleClass="form-label" text="ULANGI PASSWORD" />
+                                <PasswordField fx:id="confirmPasswordField" onAction="#onRegisterClick" promptText="Ulangi password" />
+                            </children>
+                        </VBox>
+
+                        <Button fx:id="registerButton" defaultButton="true" maxWidth="Infinity" onAction="#onRegisterClick" styleClass="primary-button" text="Daftar" />
+
+                        <HBox alignment="CENTER" spacing="6.0">
+                            <children>
+                                <Label styleClass="muted-text" text="Sudah punya akun?" />
+                                <Button fx:id="backToLoginButton" onAction="#onBackToLoginClick" styleClass="link-button" text="Kembali ke Login" />
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+            </children>
+        </StackPane>
+    </content>
+</ScrollPane>

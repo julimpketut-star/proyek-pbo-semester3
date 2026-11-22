@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<!-- SONORA - Landing Page publik (tanpa login). Controller: STEP 7. -->
+<BorderPane fx:id="rootPane" styleClass="page" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.studiomusik.controller.LandingController">
+
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="8.0" styleClass="navbar">
+            <children>
+                <VBox spacing="0.0">
+                    <children>
+                        <HBox spacing="0.0" alignment="BOTTOM_LEFT">
+                            <children>
+                                <Label styleClass="logo-sono" text="SONO" />
+                                <Label styleClass="logo-ra" text="RA" />
+                            </children>
+                        </HBox>
+                        <Label styleClass="logo-tagline" text="MUSIC STUDIO &amp; RENT" />
+                    </children>
+                </VBox>
+                <Region prefWidth="32.0" />
+                <Button fx:id="navHomeButton" onAction="#onNavHome" styleClass="navbar-link" text="Beranda" />
+                <Button fx:id="navStudioButton" onAction="#onNavStudio" styleClass="navbar-link" text="Studio" />
+                <Button fx:id="navFacilityButton" onAction="#onNavFacility" styleClass="navbar-link" text="Fasilitas" />
+                <Button fx:id="navHowToButton" onAction="#onNavHowTo" styleClass="navbar-link" text="Cara Booking" />
+                <Button fx:id="navContactButton" onAction="#onNavContact" styleClass="navbar-link" text="Kontak" />
+                <Region HBox.hgrow="ALWAYS" />
+                <Button fx:id="loginButton" onAction="#onLoginClick" styleClass="primary-button" text="Login" />
+            </children>
+        </HBox>
+    </top>
+
+    <center>
+        <ScrollPane fx:id="landingScroll" fitToWidth="true" hbarPolicy="NEVER" styleClass="scroll-transparent">
+            <content>
+                <VBox fx:id="contentBox" styleClass="page">
+                    <children>
+
+                        <!-- HERO -->
+                        <StackPane fx:id="heroSection">
+                            <children>
+                                <Region styleClass="hero-bg" />
+                                <Region styleClass="hero-glow" />
+                                <ImageView fx:id="heroImageView" managed="false" preserveRatio="false" visible="false" />
+                                <VBox alignment="TOP_CENTER" spacing="20.0">
+                                    <padding>
+                                        <Insets bottom="40.0" left="40.0" right="40.0" top="56.0" />
+                                    </padding>
+                                    <children>
+                                        <Label styleClass="hero-eyebrow" text="YOUR MUSIC STARTS HERE" />
+                                        <Label alignment="CENTER" maxWidth="Infinity" styleClass="hero-heading" text="Bring Your Music to Life." textAlignment="CENTER" wrapText="true" />
+                                        <Label alignment="CENTER" maxWidth="Infinity" styleClass="hero-text"
+                                               text="Temukan ruang terbaik untuk berlatih, berkarya, dan menciptakan karya musik bersama SONORA."
+                                               textAlignment="CENTER" wrapText="true" />
+                                        <Button fx:id="startButton" onAction="#onStartClick" styleClass="primary-button, cta-large" text="Mulai Sekarang" />
+                                        <Region minHeight="24.0" VBox.vgrow="ALWAYS" />
+
+                                        <!-- Quick Booking Panel -->
+                                        <VBox alignment="CENTER" maxWidth="940.0" spacing="14.0" styleClass="booking-panel" StackPane.alignment="CENTER">
+                                            <children>
+                                                <VBox alignment="CENTER_LEFT" spacing="2.0">
+                                                    <children>
+                                                        <Label styleClass="card-heading" text="Mulai booking studio" />
+                                                        <Label styleClass="caption" text="Temukan jadwal yang cocok untuk sesi musikmu." />
+                                                    </children>
+                                                </VBox>
+                                                <HBox alignment="BOTTOM_CENTER" spacing="16.0">
+                                                    <children>
+                                                        <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                                                            <children>
+                                                                <Label styleClass="form-label" text="TANGGAL" />
+                                                                <DatePicker fx:id="bookingDatePicker" editable="false" maxWidth="Infinity" promptText="Pilih tanggal" />
+                                                            </children>
+                                                        </VBox>
+                                                        <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                                                            <children>
+                                                                <Label styleClass="form-label" text="DURASI" />
+                                                                <ComboBox fx:id="durationComboBox" maxWidth="Infinity" promptText="Pilih durasi" />
+                                                            </children>
+                                                        </VBox>
+                                                        <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                                                            <children>
+                                                                <Label styleClass="form-label" text="JENIS STUDIO" />
+                                                                <ComboBox fx:id="studioTypeComboBox" maxWidth="Infinity" promptText="Pilih jenis studio" />
+                                                            </children>
+                                                        </VBox>
+                                                        <Button fx:id="searchScheduleButton" minWidth="180.0" onAction="#onSearchSchedule"
+                                                                prefHeight="40.0" styleClass="primary-button" text="Cari Jadwal Studio  →" />
+                                                    </children>
+                                                </HBox>
+                                                <Label fx:id="quickBookingMessageLabel" managed="false" maxWidth="Infinity"
+                                                       styleClass="message-area" visible="false" wrapText="true" />
+                                                <VBox fx:id="scheduleResultBox" managed="false" spacing="8.0" visible="false">
+                                                    <children>
+                                                        <Label fx:id="scheduleResultTitleLabel" styleClass="card-heading" text="Jadwal tersedia" />
+                                                        <FlowPane fx:id="scheduleResultPane" hgap="10.0" vgap="10.0" />
+                                                    </children>
+                                                </VBox>
+                                            </children>
+                                        </VBox>
+                                    </children>
+                                </VBox>
+                            </children>
+                        </StackPane>
+
+                        <!-- STUDIO -->
+                        <VBox fx:id="studioSection" spacing="8.0" styleClass="page">
+                            <padding>
+                                <Insets bottom="48.0" left="40.0" right="40.0" top="56.0" />
+                            </padding>
+                            <children>
+                                <Label styleClass="section-heading" text="Studio" />
+                                <Label styleClass="section-subtitle" text="Ruang latihan dan rekaman yang tersedia di SONORA." />
+                                <FlowPane fx:id="studioCardsPane" hgap="20.0" vgap="20.0">
+                                    <padding>
+                                        <Insets top="16.0" />
+                                    </padding>
+                                </FlowPane>
+                                <Label fx:id="studioEmptyLabel" managed="false" styleClass="muted-text" text="Data studio belum tersedia." visible="false" />
+                            </children>
+                        </VBox>
+
+                        <!-- FASILITAS -->
+                        <VBox fx:id="facilitySection" spacing="8.0" styleClass="alt-section">
+                            <padding>
+                                <Insets bottom="48.0" left="40.0" right="40.0" top="56.0" />
+                            </padding>
+                            <children>
+                                <Label styleClass="section-heading" text="Fasilitas" />
+                                <Label styleClass="section-subtitle" text="Instrumen dan perlengkapan yang dapat disewa bersama sesi studio." />
+                                <FlowPane fx:id="facilityCardsPane" hgap="20.0" vgap="20.0">
+                                    <padding>
+                                        <Insets top="16.0" />
+                                    </padding>
+                                </FlowPane>
+                                <Label fx:id="facilityEmptyLabel" managed="false" styleClass="muted-text" text="Data fasilitas belum tersedia." visible="false" />
+                            </children>
+                        </VBox>
+
+                        <!-- CARA BOOKING -->
+                        <VBox fx:id="howToSection" spacing="8.0" styleClass="page">
+                            <padding>
+                                <Insets bottom="48.0" left="40.0" right="40.0" top="56.0" />
+                            </padding>
+                            <children>
+                                <Label styleClass="section-heading" text="Cara Booking" />
+                                <Label styleClass="section-subtitle" text="Lima langkah dari memilih jadwal sampai memantau status pesananmu." />
+                                <FlowPane hgap="20.0" vgap="20.0">
+                                    <padding>
+                                        <Insets top="16.0" />
+                                    </padding>
+                                    <children>
+                                        <VBox prefWidth="200.0" spacing="8.0" styleClass="card">
+                                            <children>
+                                                <Label styleClass="step-number" text="1" />
+                                                <Label styleClass="card-heading" text="Pilih jadwal" />
+                                                <Label styleClass="card-text" text="Tentukan tanggal, durasi, dan jenis studio, lalu tekan Cari Jadwal Studio." wrapText="true" />
+                                            </children>
+                                        </VBox>
+                                        <VBox prefWidth="200.0" spacing="8.0" styleClass="card">
+                                            <children>
+                                                <Label styleClass="step-number" text="2" />
+                                                <Label styleClass="card-heading" text="Masuk atau daftar" />
+                                                <Label styleClass="card-text" text="Booking dikirim atas nama akun Customer. Daftar gratis bila belum punya akun." wrapText="true" />
+                                            </children>
+                                        </VBox>
+                                        <VBox prefWidth="200.0" spacing="8.0" styleClass="card">
+                                            <children>
+                                                <Label styleClass="step-number" text="3" />
+                                                <Label styleClass="card-heading" text="Pilih ruangan &amp; alat" />
+                                                <Label styleClass="card-text" text="Cek ketersediaan, tambahkan instrumen bila perlu, dan lihat estimasi biaya." wrapText="true" />
+                                            </children>
+                                        </VBox>
+                                        <VBox prefWidth="200.0" spacing="8.0" styleClass="card">
+                                            <children>
+                                                <Label styleClass="step-number" text="4" />
+                                                <Label styleClass="card-heading" text="Kirim booking" />
+                                                <Label styleClass="card-text" text="Booking baru berstatus PENDING sampai dikonfirmasi pengelola studio." wrapText="true" />
+                                            </children>
+                                        </VBox>
+                                        <VBox prefWidth="200.0" spacing="8.0" styleClass="card">
+                                            <children>
+                                                <Label styleClass="step-number" text="5" />
+                                                <Label styleClass="card-heading" text="Pantau status" />
+                                                <Label styleClass="card-text" text="Lihat status dan total biaya pada tab Riwayat di dashboard Customer." wrapText="true" />
+                                            </children>
+                                        </VBox>
+                                    </children>
+                                </FlowPane>
+                                <HBox alignment="CENTER_LEFT" spacing="8.0">
+                                    <padding>
+                                        <Insets top="8.0" />
+                                    </padding>
+                                    <children>
+                                        <Label styleClass="muted-text" text="Belum punya akun?" />
+                                        <Button fx:id="registerLinkButton" onAction="#onRegisterClick" styleClass="link-button" text="Daftar sebagai Customer" />
+                                    </children>
+                                </HBox>
+                            </children>
+                        </VBox>
+
+                        <!-- KONTAK -->
+                        <VBox fx:id="contactSection" spacing="8.0" styleClass="alt-section">
+                            <padding>
+                                <Insets bottom="48.0" left="40.0" right="40.0" top="56.0" />
+                            </padding>
+                            <children>
+                                <Label styleClass="section-heading" text="Kontak" />
+                                <Label styleClass="section-subtitle" text="Hubungi pengelola studio untuk informasi lebih lanjut." />
+                                <VBox maxWidth="520.0" spacing="12.0" styleClass="card">
+                                    <children>
+                                        <VBox spacing="2.0">
+                                            <children>
+                                                <Label styleClass="form-label" text="ALAMAT" />
+                                                <Label fx:id="contactAddressLabel" text="Belum diatur oleh pengelola." wrapText="true" />
+                                            </children>
+                                        </VBox>
+                                        <VBox spacing="2.0">
+                                            <children>
+                                                <Label styleClass="form-label" text="NOMOR KONTAK" />
+                                                <Label fx:id="contactPhoneLabel" text="Belum diatur oleh pengelola." wrapText="true" />
+                                            </children>
+                                        </VBox>
+                                        <VBox spacing="2.0">
+                                            <children>
+                                                <Label styleClass="form-label" text="EMAIL" />
+                                                <Label fx:id="contactEmailLabel" text="Belum diatur oleh pengelola." wrapText="true" />
+                                            </children>
+                                        </VBox>
+                                        <VBox spacing="2.0">
+                                            <children>
+                                                <Label styleClass="form-label" text="JAM OPERASIONAL" />
+                                                <Label fx:id="contactHoursLabel" text="Belum diatur oleh pengelola." wrapText="true" />
+                                            </children>
+                                        </VBox>
+                                    </children>
+                                </VBox>
+                            </children>
+                        </VBox>
+
+                        <!-- FOOTER -->
+                        <HBox alignment="CENTER_LEFT" spacing="16.0" styleClass="footer">
+                            <children>
+                                <HBox alignment="BOTTOM_LEFT" spacing="0.0">
+                                    <children>
+                                        <Label styleClass="logo-sono" text="SONO" />
+                                        <Label styleClass="logo-ra" text="RA" />
+                                    </children>
+                                </HBox>
+                                <Region HBox.hgrow="ALWAYS" />
+                                <Label styleClass="footer-text" text="Bring Your Music to Life." />
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+</BorderPane>

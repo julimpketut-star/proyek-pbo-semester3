@@ -1,49 +1,755 @@
-/* Gaya dasar aplikasi Studio Musik (STEP 1 - starter) */
+/* =====================================================================
+   SONORA - Modernized Premium Stylesheet
+   Modern aesthetic, elegant typography, smooth cards, clean tables & refined controls.
+   ===================================================================== */
 
-.root-pane {
-    -fx-background-color: linear-gradient(to bottom, #1f2937, #111827);
-    -fx-padding: 32;
+.root {
+    -sonora-primary: #FF7020;
+    -sonora-primary-hover: #FA5E07;
+    -sonora-primary-dark: #E04E00;
+    -sonora-primary-light: #FFF0E6;
+    -sonora-secondary: #1E1B18;
+    -sonora-secondary-light: #2C2723;
+    -sonora-tertiary: #F7EFE7;
+    -sonora-background: #F8F9FA;
+    -sonora-surface: #FFFFFF;
+    -sonora-text: #212529;
+    -sonora-muted: #6C757D;
+    -sonora-border: #E2E6EA;
+    -sonora-border-focus: #FF7020;
+    -sonora-placeholder: #ADB5BD;
+    -sonora-success: #198754;
+    -sonora-success-bg: #E8F7F0;
+    -sonora-warning: #D97706;
+    -sonora-warning-bg: #FEF3C7;
+    -sonora-danger: #DC2626;
+    -sonora-danger-bg: #FEE2E2;
+    -sonora-info: #0284C7;
+    -sonora-info-bg: #E0F2FE;
+
+    -fx-font-family: "Segoe UI", "Inter", "Roboto", "Helvetica Neue", sans-serif;
+    -fx-font-size: 13.5px;
+    -fx-base: #F8F9FA;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
 }
 
+/* ---------- Dasar Halaman & Layout ---------- */
+.page {
+    -fx-background-color: -sonora-background;
+}
+.page-padded {
+    -fx-background-color: -sonora-background;
+    -fx-padding: 28 44 28 44;
+}
+.surface-section {
+    -fx-background-color: -sonora-surface;
+}
+.alt-section {
+    -fx-background-color: #F3ECE4;
+}
+.scroll-transparent, .scroll-transparent > .viewport {
+    -fx-background-color: transparent;
+}
+.scroll-pane {
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+    -fx-background-color: transparent;
+}
+.scroll-pane:focused {
+    -fx-background-insets: 0;
+}
+
+/* ScrollBar Modern & Minimalis */
+.scroll-bar:vertical, .scroll-bar:horizontal {
+    -fx-background-color: transparent;
+    -fx-padding: 2;
+}
+.scroll-bar:vertical .thumb, .scroll-bar:horizontal .thumb {
+    -fx-background-color: #D1D5DB;
+    -fx-background-radius: 8;
+}
+.scroll-bar:vertical .thumb:hover, .scroll-bar:horizontal .thumb:hover {
+    -fx-background-color: #9CA3AF;
+}
+.scroll-bar .track, .scroll-bar .increment-button, .scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+    -fx-opacity: 0;
+    -fx-padding: 0;
+}
+
+/* ---------- Tipografi ---------- */
+.font-display {
+    -fx-font-family: "Segoe UI Semibold", "Segoe UI", "Inter", sans-serif;
+}
+.hero-eyebrow {
+    -fx-font-family: "Segoe UI Semibold", "Segoe UI", sans-serif;
+    -fx-font-weight: 700;
+    -fx-font-size: 12.5px;
+    -fx-letter-spacing: 1.5px;
+    -fx-text-fill: #FFA875;
+    -fx-background-color: rgba(255, 112, 32, 0.15);
+    -fx-border-color: rgba(255, 112, 32, 0.4);
+    -fx-border-radius: 24;
+    -fx-background-radius: 24;
+    -fx-padding: 6 20 6 20;
+    -fx-alignment: center;
+}
+.hero-heading {
+    -fx-font-family: "Segoe UI Bold", "Segoe UI", sans-serif;
+    -fx-font-weight: 800;
+    -fx-font-size: 48px;
+    -fx-text-fill: #FFFFFF;
+    -fx-text-alignment: center;
+    -fx-alignment: center;
+}
+.hero-text {
+    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-font-size: 16px;
+    -fx-text-fill: #E5E7EB;
+    -fx-text-alignment: center;
+    -fx-alignment: center;
+    -fx-line-spacing: 4px;
+}
+.section-heading {
+    -fx-font-family: "Segoe UI Bold", "Segoe UI", sans-serif;
+    -fx-font-weight: 700;
+    -fx-font-size: 26px;
+    -fx-text-fill: -sonora-secondary;
+}
+.section-subtitle {
+    -fx-font-size: 13.5px;
+    -fx-text-fill: -sonora-muted;
+}
+.page-title {
+    -fx-font-family: "Segoe UI Bold", "Segoe UI", sans-serif;
+    -fx-font-weight: 700;
+    -fx-font-size: 22px;
+    -fx-text-fill: -sonora-secondary;
+}
+.card-heading {
+    -fx-font-family: "Segoe UI Semibold", "Segoe UI", sans-serif;
+    -fx-font-weight: 700;
+    -fx-font-size: 16.5px;
+    -fx-text-fill: -sonora-secondary;
+}
+.card-text {
+    -fx-font-size: 13.5px;
+    -fx-text-fill: -sonora-muted;
+    -fx-wrap-text: true;
+}
+.muted-text {
+    -fx-text-fill: -sonora-muted;
+}
+.caption {
+    -fx-font-size: 12px;
+    -fx-text-fill: -sonora-muted;
+}
+.form-label {
+    -fx-font-size: 11.5px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #4B5563;
+    -fx-letter-spacing: 0.5px;
+}
+
+/* ---------- Logo Wordmark ---------- */
+.logo-sono {
+    -fx-font-family: "Segoe UI Bold", "Segoe UI", sans-serif;
+    -fx-font-weight: 900;
+    -fx-font-size: 25px;
+    -fx-text-fill: #FFFFFF;
+}
+.logo-ra {
+    -fx-font-family: "Segoe UI Bold", "Segoe UI", sans-serif;
+    -fx-font-weight: 900;
+    -fx-font-size: 25px;
+    -fx-text-fill: -sonora-primary;
+}
+.logo-tagline {
+    -fx-font-size: 9px;
+    -fx-letter-spacing: 1.2px;
+    -fx-text-fill: #9CA3AF;
+    -fx-font-weight: 700;
+}
+.logo-sono.on-light {
+    -fx-text-fill: -sonora-secondary;
+}
+.logo-tagline.on-light {
+    -fx-text-fill: -sonora-muted;
+}
+
+/* ---------- Navbar ---------- */
+.navbar {
+    -fx-background-color: -sonora-secondary;
+    -fx-padding: 14 36 14 36;
+    -fx-min-height: 68;
+    -fx-border-color: transparent transparent rgba(255, 255, 255, 0.08) transparent;
+    -fx-border-width: 0 0 1 0;
+}
+.navbar-link {
+    -fx-background-color: transparent;
+    -fx-text-fill: #D1D5DB;
+    -fx-font-size: 13.5px;
+    -fx-font-weight: 600;
+    -fx-cursor: hand;
+    -fx-padding: 8 14 8 14;
+    -fx-background-radius: 8;
+}
+.navbar-link:hover {
+    -fx-text-fill: #FFFFFF;
+    -fx-background-color: rgba(255, 255, 255, 0.08);
+}
+.navbar-link:focused {
+    -fx-background-color: rgba(255, 255, 255, 0.12);
+}
+.navbar-link.active {
+    -fx-text-fill: -sonora-primary;
+}
+.navbar-user {
+    -fx-text-fill: #E5E7EB;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+}
+
+/* ---------- Hero ---------- */
+.hero-bg {
+    -fx-background-color: linear-gradient(to bottom right, #141210 0%, #201D1A 50%, #361E0E 100%);
+    -fx-min-height: 620;
+}
+.hero-overlay {
+    -fx-background-color: rgba(20, 18, 16, 0.4);
+}
+.hero-glow {
+    -fx-background-color: radial-gradient(center 80% 100%, radius 70%, rgba(255, 112, 32, 0.22), transparent);
+}
+
+/* ---------- Tombol (Modern & Tactile) ---------- */
+.button {
+    -fx-font-family: "Segoe UI Semibold", "Segoe UI", sans-serif;
+    -fx-cursor: hand;
+}
+.primary-button {
+    -fx-background-color: -sonora-primary;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: 700;
+    -fx-font-size: 13.5px;
+    -fx-background-radius: 8;
+    -fx-padding: 10 22 10 22;
+    -fx-effect: dropshadow(gaussian, rgba(255, 112, 32, 0.35), 10, 0.2, 0, 3);
+}
+.primary-button:hover {
+    -fx-background-color: -sonora-primary-hover;
+    -fx-effect: dropshadow(gaussian, rgba(255, 112, 32, 0.5), 14, 0.25, 0, 4);
+}
+.primary-button:pressed {
+    -fx-background-color: -sonora-primary-dark;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 4, 0.1, 0, 1);
+}
+.primary-button:disabled {
+    -fx-background-color: #E5E7EB;
+    -fx-text-fill: #9CA3AF;
+    -fx-opacity: 1;
+    -fx-effect: none;
+}
+.primary-button.cta-large {
+    -fx-font-size: 15px;
+    -fx-padding: 13 40 13 40;
+    -fx-background-radius: 10;
+}
+.secondary-button {
+    -fx-background-color: -sonora-secondary;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: 600;
+    -fx-font-size: 13.5px;
+    -fx-background-radius: 8;
+    -fx-padding: 10 20 10 20;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.12), 6, 0.1, 0, 2);
+}
+.secondary-button:hover {
+    -fx-background-color: -sonora-secondary-light;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 8, 0.15, 0, 3);
+}
+.secondary-button:disabled {
+    -fx-background-color: #E5E7EB;
+    -fx-text-fill: #9CA3AF;
+    -fx-opacity: 1;
+    -fx-effect: none;
+}
+.outline-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: -sonora-secondary;
+    -fx-font-weight: 600;
+    -fx-font-size: 13.5px;
+    -fx-border-color: #D1D5DB;
+    -fx-border-width: 1.2;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 9 18 9 18;
+}
+.outline-button:hover {
+    -fx-background-color: #F3F4F6;
+    -fx-border-color: #9CA3AF;
+}
+.outline-button:disabled {
+    -fx-border-color: #E5E7EB;
+    -fx-text-fill: #D1D5DB;
+    -fx-opacity: 1;
+}
+.outline-button.on-dark {
+    -fx-text-fill: #F3F4F6;
+    -fx-border-color: rgba(255, 255, 255, 0.3);
+}
+.outline-button.on-dark:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.12);
+    -fx-border-color: #FFFFFF;
+}
+.danger-button {
+    -fx-background-color: -sonora-danger;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: 600;
+    -fx-font-size: 13.5px;
+    -fx-background-radius: 8;
+    -fx-padding: 10 20 10 20;
+    -fx-effect: dropshadow(gaussian, rgba(220, 38, 38, 0.3), 8, 0.15, 0, 2);
+}
+.danger-button:hover {
+    -fx-background-color: #B91C1C;
+    -fx-effect: dropshadow(gaussian, rgba(220, 38, 38, 0.45), 10, 0.2, 0, 3);
+}
+.danger-button:disabled {
+    -fx-background-color: #E5E7EB;
+    -fx-text-fill: #9CA3AF;
+    -fx-opacity: 1;
+    -fx-effect: none;
+}
+.link-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: -sonora-primary;
+    -fx-font-weight: 700;
+    -fx-cursor: hand;
+    -fx-underline: false;
+    -fx-padding: 4 6 4 6;
+}
+.link-button:hover {
+    -fx-text-fill: -sonora-primary-dark;
+    -fx-underline: true;
+}
+.compact-button {
+    -fx-padding: 6 14 6 14;
+    -fx-font-size: 12.5px;
+}
+
+/* ---------- Input Kontrol (Form Fields) ---------- */
+.text-field, .password-field, .text-area, .date-picker > .text-field, .combo-box-base {
+    -fx-background-color: #FFFFFF;
+    -fx-text-fill: -sonora-text;
+    -fx-prompt-text-fill: -sonora-placeholder;
+    -fx-border-color: -sonora-border;
+    -fx-border-width: 1.2;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-font-size: 13.5px;
+}
+.text-field, .password-field {
+    -fx-padding: 8 14 8 14;
+    -fx-pref-height: 40;
+}
+.text-area {
+    -fx-padding: 4;
+}
+.text-area .content {
+    -fx-background-color: #FFFFFF;
+    -fx-background-radius: 8;
+}
+.text-field:focused, .password-field:focused, .text-area:focused, .combo-box-base:focused,
+.date-picker:focused > .text-field {
+    -fx-border-color: -sonora-border-focus;
+    -fx-background-color: #FFFFFF;
+    -fx-effect: dropshadow(gaussian, rgba(255, 112, 32, 0.2), 6, 0.15, 0, 0);
+}
+.combo-box-base {
+    -fx-pref-height: 40;
+}
+.combo-box .list-cell {
+    -fx-text-fill: -sonora-text;
+    -fx-padding: 6 12 6 12;
+}
+.combo-box-popup .list-view {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: -sonora-border;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.12), 12, 0.15, 0, 4);
+}
+.combo-box-popup .list-cell:filled:hover, .combo-box-popup .list-cell:filled:selected {
+    -fx-background-color: -sonora-primary-light;
+    -fx-text-fill: -sonora-primary-dark;
+    -fx-font-weight: 600;
+}
+.date-picker {
+    -fx-pref-height: 40;
+}
+.date-picker > .arrow-button, .combo-box > .arrow-button {
+    -fx-background-color: transparent;
+}
+.spinner .text-field {
+    -fx-pref-height: 38;
+}
+.check-box {
+    -fx-text-fill: -sonora-text;
+}
+.check-box:selected .mark {
+    -fx-background-color: #FFFFFF;
+}
+.check-box:selected .box {
+    -fx-background-color: -sonora-primary;
+    -fx-border-color: -sonora-primary;
+}
+
+/* ---------- Card & Panel Modern ---------- */
+.card {
+    -fx-background-color: -sonora-surface;
+    -fx-background-radius: 12;
+    -fx-border-color: -sonora-border;
+    -fx-border-width: 1;
+    -fx-border-radius: 12;
+    -fx-padding: 22;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.04), 8, 0.08, 0, 2);
+}
+.card-flat {
+    -fx-background-color: -sonora-surface;
+    -fx-background-radius: 12;
+    -fx-border-color: -sonora-border;
+    -fx-border-width: 1;
+    -fx-border-radius: 12;
+    -fx-padding: 20;
+}
+.booking-panel {
+    -fx-background-color: -sonora-surface;
+    -fx-background-radius: 14;
+    -fx-padding: 24 28 24 28;
+    -fx-alignment: center;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.28), 24, 0.15, 0, 8);
+}
+.auth-card {
+    -fx-background-color: -sonora-surface;
+    -fx-background-radius: 16;
+    -fx-padding: 38 40 38 40;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.24), 32, 0.15, 0, 10);
+}
+.auth-backdrop {
+    -fx-background-color: linear-gradient(to bottom right, #141210 0%, #221E1B 55%, #3B200E 100%);
+}
+.summary-card {
+    -fx-background-color: -sonora-surface;
+    -fx-background-radius: 12;
+    -fx-border-color: -sonora-border;
+    -fx-border-width: 1;
+    -fx-border-radius: 12;
+    -fx-padding: 18 22 18 22;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.04), 8, 0.08, 0, 2);
+}
+.summary-value {
+    -fx-font-family: "Segoe UI Bold", "Segoe UI", sans-serif;
+    -fx-font-weight: 800;
+    -fx-font-size: 32px;
+    -fx-text-fill: -sonora-secondary;
+}
+.summary-label {
+    -fx-font-size: 11.5px;
+    -fx-font-weight: 600;
+    -fx-text-fill: -sonora-muted;
+}
+.summary-card.pending {
+    -fx-border-color: transparent transparent transparent -sonora-warning;
+    -fx-border-width: 0 0 0 4.5;
+    -fx-border-radius: 12;
+}
+.summary-card.confirmed {
+    -fx-border-color: transparent transparent transparent -sonora-info;
+    -fx-border-width: 0 0 0 4.5;
+    -fx-border-radius: 12;
+}
+.summary-card.completed {
+    -fx-border-color: transparent transparent transparent -sonora-success;
+    -fx-border-width: 0 0 0 4.5;
+    -fx-border-radius: 12;
+}
+.summary-card.cancelled {
+    -fx-border-color: transparent transparent transparent -sonora-danger;
+    -fx-border-width: 0 0 0 4.5;
+    -fx-border-radius: 12;
+}
+.cost-box {
+    -fx-background-color: -sonora-primary-light;
+    -fx-background-radius: 10;
+    -fx-border-color: rgba(255, 112, 32, 0.2);
+    -fx-border-radius: 10;
+    -fx-padding: 14 20 14 20;
+}
+.cost-value {
+    -fx-font-family: "Segoe UI Bold", "Segoe UI", sans-serif;
+    -fx-font-weight: 800;
+    -fx-font-size: 22px;
+    -fx-text-fill: -sonora-primary-dark;
+}
+.step-number {
+    -fx-background-color: -sonora-primary;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-family: "Segoe UI Bold", sans-serif;
+    -fx-font-weight: 800;
+    -fx-background-radius: 20;
+    -fx-min-width: 32;
+    -fx-min-height: 32;
+    -fx-alignment: center;
+}
+.separator .line {
+    -fx-border-color: -sonora-border;
+    -fx-border-width: 1 0 0 0;
+}
+
+/* ---------- Pesan / Status Alert Box ---------- */
+.message-area {
+    -fx-padding: 12 16 12 16;
+    -fx-background-radius: 8;
+    -fx-font-size: 13px;
+    -fx-wrap-text: true;
+    -fx-text-fill: -sonora-muted;
+}
+.message-error {
+    -fx-background-color: -sonora-danger-bg;
+    -fx-text-fill: #991B1B;
+    -fx-border-color: -sonora-danger;
+    -fx-border-radius: 8;
+    -fx-border-width: 0 0 0 4;
+}
+.message-success {
+    -fx-background-color: -sonora-success-bg;
+    -fx-text-fill: #065F46;
+    -fx-border-color: -sonora-success;
+    -fx-border-radius: 8;
+    -fx-border-width: 0 0 0 4;
+}
+.message-info {
+    -fx-background-color: -sonora-info-bg;
+    -fx-text-fill: #075985;
+    -fx-border-color: -sonora-info;
+    -fx-border-radius: 8;
+    -fx-border-width: 0 0 0 4;
+}
+.message-warning {
+    -fx-background-color: -sonora-warning-bg;
+    -fx-text-fill: #92400E;
+    -fx-border-color: -sonora-warning;
+    -fx-border-radius: 8;
+    -fx-border-width: 0 0 0 4;
+}
+.field-error {
+    -fx-text-fill: -sonora-danger;
+    -fx-font-size: 12px;
+}
+
+/* Status Badges */
+.badge {
+    -fx-font-size: 11px;
+    -fx-font-weight: 700;
+    -fx-padding: 3 10 3 10;
+    -fx-background-radius: 12;
+}
+.status-pending, .status-maintenance-soft {
+    -fx-background-color: -sonora-warning-bg;
+    -fx-text-fill: #92400E;
+}
+.status-confirmed {
+    -fx-background-color: -sonora-info-bg;
+    -fx-text-fill: #075985;
+}
+.status-completed, .status-available {
+    -fx-background-color: -sonora-success-bg;
+    -fx-text-fill: #065F46;
+}
+.status-cancelled, .status-maintenance {
+    -fx-background-color: -sonora-danger-bg;
+    -fx-text-fill: #991B1B;
+}
+
+/* ---------- TableView Bersih & Modern ---------- */
+.table-view {
+    -fx-background-color: -sonora-surface;
+    -fx-border-color: -sonora-border;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-table-cell-border-color: #F1F3F5;
+    -fx-font-size: 13px;
+    -fx-fixed-cell-size: 42;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.03), 6, 0.05, 0, 2);
+}
+.table-view .column-header-background {
+    -fx-background-color: #F8F9FA;
+    -fx-background-radius: 10 10 0 0;
+    -fx-border-color: transparent transparent -sonora-border transparent;
+    -fx-border-width: 0 0 1 0;
+}
+.table-view .column-header, .table-view .filler {
+    -fx-background-color: transparent;
+    -fx-size: 42;
+    -fx-border-color: transparent;
+}
+.table-view .column-header .label {
+    -fx-font-family: "Segoe UI Semibold", "Segoe UI", sans-serif;
+    -fx-font-weight: 700;
+    -fx-font-size: 11.5px;
+    -fx-text-fill: #4B5563;
+    -fx-alignment: center-left;
+    -fx-letter-spacing: 0.4px;
+}
+.table-row-cell {
+    -fx-background-color: -sonora-surface;
+    -fx-text-fill: -sonora-text;
+    -fx-border-color: transparent transparent #F3F4F6 transparent;
+    -fx-border-width: 0 0 1 0;
+}
+.table-row-cell:odd {
+    -fx-background-color: #FAFBFC;
+}
+.table-row-cell:hover {
+    -fx-background-color: #F5F7FA;
+}
+.table-row-cell:selected {
+    -fx-background-color: #FFEFE5;
+}
+.table-row-cell:selected .table-cell {
+    -fx-text-fill: -sonora-secondary;
+}
+.table-cell {
+    -fx-text-fill: -sonora-text;
+    -fx-alignment: center-left;
+    -fx-padding: 0 12 0 12;
+}
+.table-view:focused {
+    -fx-background-color: -sonora-surface;
+}
+.table-view .placeholder .label {
+    -fx-text-fill: -sonora-muted;
+}
+.table-cell.numeric {
+    -fx-alignment: center-right;
+    -fx-font-family: "Segoe UI", monospace;
+    -fx-font-weight: 600;
+}
+
+/* ---------- TabPane Modern (Segmented/Underline Style) ---------- */
+.tab-pane {
+    -fx-tab-min-height: 42;
+}
+.tab-pane > .tab-header-area > .tab-header-background {
+    -fx-background-color: transparent;
+}
+.tab-pane > .tab-header-area {
+    -fx-padding: 0 0 8 0;
+    -fx-border-color: transparent transparent -sonora-border transparent;
+    -fx-border-width: 0 0 1.5 0;
+}
+.tab-pane .tab {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-background-radius: 8 8 0 0;
+    -fx-padding: 8 22 8 22;
+}
+.tab-pane .tab .tab-label {
+    -fx-font-family: "Segoe UI Semibold", "Segoe UI", sans-serif;
+    -fx-font-weight: 600;
+    -fx-font-size: 13.5px;
+    -fx-text-fill: -sonora-muted;
+}
+.tab-pane .tab:hover .tab-label {
+    -fx-text-fill: -sonora-secondary;
+}
+.tab-pane .tab:selected {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent transparent -sonora-primary transparent;
+    -fx-border-width: 0 0 3 0;
+}
+.tab-pane .tab:selected .tab-label {
+    -fx-text-fill: -sonora-primary;
+    -fx-font-weight: 700;
+}
+.tab-pane > .tab-content-area {
+    -fx-background-color: transparent;
+    -fx-padding: 16 0 0 0;
+}
+.tab:focused .focus-indicator {
+    -fx-border-color: transparent;
+}
+
+/* ---------- Toolbar & Filter ---------- */
+.toolbar {
+    -fx-padding: 0 0 14 0;
+}
+.filter-bar {
+    -fx-background-color: -sonora-surface;
+    -fx-background-radius: 10;
+    -fx-border-color: -sonora-border;
+    -fx-border-radius: 10;
+    -fx-padding: 12 16 12 16;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.03), 6, 0.05, 0, 2);
+}
+
+/* ---------- Footer ---------- */
+.footer {
+    -fx-background-color: -sonora-secondary;
+    -fx-padding: 32 44 32 44;
+}
+.footer-text {
+    -fx-text-fill: #E5E7EB;
+    -fx-font-size: 13px;
+}
+.footer-muted {
+    -fx-text-fill: #9CA3AF;
+    -fx-font-size: 12px;
+}
+
+/* ---------- Dialogs ---------- */
+.dialog-pane {
+    -fx-background-color: -sonora-surface;
+}
+.dialog-pane > .button-bar > .container {
+    -fx-background-color: -sonora-background;
+}
+.dialog-pane > .header-panel {
+    -fx-background-color: -sonora-tertiary;
+}
+.dialog-pane > .header-panel .label {
+    -fx-font-family: "Segoe UI Semibold", sans-serif;
+    -fx-text-fill: -sonora-secondary;
+}
+
+/* ---------- Starter Compatibility ---------- */
+.root-pane {
+    -fx-background-color: linear-gradient(to bottom, #292522, #1B1816);
+    -fx-padding: 32;
+}
 .app-title {
-    -fx-text-fill: #f9fafb;
+    -fx-text-fill: #FAF8F5;
     -fx-font-size: 26px;
     -fx-font-weight: bold;
     -fx-text-alignment: center;
 }
-
 .app-subtitle {
-    -fx-text-fill: #9ca3af;
+    -fx-text-fill: #99918A;
     -fx-font-size: 13px;
     -fx-text-alignment: center;
 }
-
 .starter-info {
-    -fx-text-fill: #d1d5db;
+    -fx-text-fill: #E8DED5;
     -fx-font-size: 14px;
     -fx-text-alignment: center;
 }
-
-.primary-button {
-    -fx-background-color: #6366f1;
-    -fx-text-fill: white;
-    -fx-font-size: 14px;
-    -fx-font-weight: bold;
-    -fx-background-radius: 8;
-    -fx-padding: 10 24 10 24;
-    -fx-cursor: hand;
-}
-
-.primary-button:hover {
-    -fx-background-color: #4f46e5;
-}
-
 .status-label {
-    -fx-text-fill: #9ca3af;
+    -fx-text-fill: #99918A;
     -fx-font-size: 13px;
 }
-
 .status-label.status-ok {
-    -fx-text-fill: #34d399;
+    -fx-text-fill: #16A36A;
     -fx-font-weight: bold;
 }
