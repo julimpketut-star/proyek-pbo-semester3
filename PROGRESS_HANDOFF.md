@@ -1,152 +1,118 @@
 # PROGRESS_HANDOFF — Sistem Pengelolaan Operasional Studio Musik (PBO TK II)
 
 > Satu-satunya dokumen handoff lintas akun Claude. Diperbarui setiap akhir STEP. Jangan membuat file handoff lain.
-> Terakhir diperbarui: 2026-11-19, akhir STEP 3.
-
+> Terakhir diperbarui: 2026-11-22, akhir STEP 7. Kumulatif STEP 0–7.
 
 ## 1. Status
-- **STEP 0** — selesai (dokumen kontrak, pemeriksaan konsistensi).
-- **STEP 1** — **selesai**. Bukti lokal pengguna 2026-11-19: `mvn clean test` (5 tes, 0 gagal, BUILD SUCCESS) dan `mvn package` (BUILD SUCCESS, JAR terbentuk). `javafx:run` dilaporkan berhasil (tanpa screenshot); tombol "Uji Interaksi" belum dikonfirmasi. Branch Git pengguna: `feature/database`.
-- **STEP 2** — **selesai, diverifikasi di sandbox** (MySQL 8.0.46): 57/57 uji lulus, siklus reset → schema → seed lulus. **Belum diverifikasi di MySQL lokal pengguna** (Windows); wajib sebelum STEP 4.
-- **STEP 3** — **selesai di sandbox**: 7 class model + 3 enum; `javac -Xlint:all` bersih; **79/79 tes lulus** lewat JUnit console (74 baru + 5 lama); uji mutasi 12 dari 13 terdeteksi (1 mutan setara). **`mvn clean test` belum berhasil dijalankan di sandbox** (Maven tidak dapat mengunduh dependency) dan **belum dijalankan lokal**; placeholder hasil lokal pada prompt STEP 3 tidak diisi pengguna.
-- **Gerbang sebelum STEP 4:** (1) `mvn clean test` lokal = 79 tes, 0 gagal; (2) verifikasi MySQL lokal = `LULUS | 57`.
-- **Tahap berikutnya:** STEP 4 — Util JDBC & DAO.
+| STEP | Isi | Status / bukti |
+|---|---|---|
+| 0 | Spesifikasi & kontrak (`docs/*`) | Selesai |
+| 1 | Maven + starter JavaFX | Selesai; lokal 2026-11-19: `mvn clean test` 5 tes, `mvn package` OK |
+| 2 | `database/schema.sql`, `seed.sql`, `reset.sql`, `verify_stage2.sql` | Selesai; sandbox MySQL 8.0.46 57/57 |
+| 3 | Model (7 class) + 3 enum | Selesai; 79 tes |
+| 4A/4B | `DatabaseConnection`, `PasswordUtil`, 6 DAO (+ tes) | Selesai; **dilaporkan pengguna: `mvn clean test` = 110 tes, 0 gagal, 0 error, 2 skip, BUILD SUCCESS** |
+| 5 | Service + exception + tes AC-R01…R19 | Kode selesai & terkompilasi; tes DB belum dijalankan (lihat §6) |
+| **6** | **View: 5 FXML + `app.css` + `docs/GUI_CONTRACT.md`** | **File selesai; XML well-formed, `fx:id`/handler konsisten dengan kontrak. FXML belum dimuat di JavaFX (controller belum ada) dan tampilan belum dilihat/di-screenshot (lihat §9)** |
+| **7** | **Controller (5) + Util (`SessionManager`, `DateTimeUtil`, `CurrencyUtil`) + `Navigator`/`UiSupport` + `MainApp`** | **Kode selesai. Belum dikompilasi penuh dan belum dijalankan dengan JavaFX (lihat §10).** |
+- **Tahap berikutnya:** STEP 8 — integrasi & perbaikan hasil uji tim (jalankan aplikasi, perbaiki galat FXML/CSS/controller), lalu STEP 9 (README, screenshot, laporan, ZIP).
 
-## 2. File proyek yang benar-benar ada (root `studio-musik/`)
-```
-pom.xml
-README.md  PROGRESS.md  PROGRESS_HANDOFF.md  .gitignore
-.vscode/extensions.json
-config/db.properties.example
-database/schema.sql  seed.sql  reset.sql
-database/tools/Pbkdf2HashGenerator.java
-database/tests/verify_stage2.sql
-docs/FINAL_SPECIFICATION.md      docs/DECISION_LOG.md (D-001…D-035)
-docs/DATABASE_CONTRACT.md        docs/ARCHITECTURE_CONTRACT.md
-docs/API_CONTRACTS.md (+§1.4)    docs/ACCEPTANCE_CRITERIA.md (+status AC-M, tabel 7 konsep PBO)
-docs/PROJECT_HANDOFF_PBO.md      docs/STAGE1_VERIFICATION.md   docs/STAGE2_VERIFICATION.md   docs/STAGE3_VERIFICATION.md
-src/main/java/com/studiomusik/MainApp.java
-src/main/java/com/studiomusik/AppInfo.java
-src/main/java/com/studiomusik/controller/MainController.java
-src/main/java/com/studiomusik/model/Person.java  Customer.java  Admin.java  Room.java  Instrument.java  BookingInstrument.java  Booking.java  package-info.java
-src/main/java/com/studiomusik/model/enums/BookingStatus.java  RoomStatus.java  InstrumentStatus.java  package-info.java
-src/main/java/com/studiomusik/{dao,service,util}/package-info.java   (hanya Javadoc layer)
-src/main/resources/com/studiomusik/view/main-view.fxml
-src/main/resources/com/studiomusik/css/app.css
-src/test/java/com/studiomusik/AppInfoTest.java
-src/test/java/com/studiomusik/model/Fixtures.java  PersonHierarchyTest.java  RoomTest.java  InstrumentTest.java
-                                    BookingInstrumentTest.java  BookingTest.java  OopConceptsTest.java
-src/test/java/com/studiomusik/model/enums/BookingStatusTest.java
-```
-**Belum ada** (jangan dianggap tersedia): `DatabaseConnection`, `PasswordUtil`, `DateTimeUtil`, `CurrencyUtil`, `SessionManager`, DAO, Service (+ exception), controller selain `MainController`, FXML selain `main-view.fxml`, `config/db.properties` asli (lokal, di-ignore Git), screenshot, laporan akhir.
+## 2. File proyek (root `studio-musik/`)
+Kode STEP 0–4 tidak diubah pada STEP 5. Catatan: `PROGRESS.md`, `README.md`, `docs/DECISION_LOG.md` di ZIP masih berstatus STEP 3 (STEP 4 & 5 belum tercatat; dilarang diubah pada STEP 5 → **koordinator perlu menyinkronkan**, lihat §7).
 
-**File STEP 3 — dibuat:** 10 file main di `model/` dan `model/enums/`, 8 file test (74 tes baru), `docs/STAGE3_VERIFICATION.md`. **Diubah:** dua `package-info.java` model, `docs/DECISION_LOG.md`, `docs/API_CONTRACTS.md`, `docs/ACCEPTANCE_CRITERIA.md`, `README.md`, `PROGRESS.md`, `PROGRESS_HANDOFF.md`. **Tidak diubah:** `pom.xml`, `database/*.sql`, kode STEP 1, `AppInfoTest`.
+**STEP 5 — main** (`src/main/java/com/studiomusik/service/`): `ServiceException`, `ValidationException`, `BusinessRuleException`, `AuthService`, `CustomerService`, `RoomService`, `InstrumentService`, `BookingService`, `ServiceSupport` (helper package-private, bukan API), `package-info.java` (diperbarui).
+**STEP 5 — test** (`src/test/java/com/studiomusik/service/`, 76 tes baru): `ServiceTestSupport` (pendukung), `ServiceValidationTest` (11, tanpa DB), `AuthServiceTest` (8), `CustomerServiceTest` (7), `RoomServiceTest` (7), `InstrumentServiceTest` (6), `BookingServiceTest` (22), `BookingInstrumentServiceTest` (10), `BookingTransactionTest` (5).
+Tidak ada FXML/Controller baru pada STEP 5.
+
+**STEP 6 — view/CSS/docs** (hanya resource & dokumen; tidak ada kelas Java baru, `model/ util/ dao/ service/ database/ pom.xml` tidak diubah):
+- Baru: `src/main/resources/com/studiomusik/view/{landing,login,register,customer-dashboard,admin-dashboard}-view.fxml` (200 `fx:id`, 44 handler unik), `docs/GUI_CONTRACT.md`.
+- Diubah: `src/main/resources/com/studiomusik/css/app.css` (tema SONORA; kelas starter lama dipertahankan agar `main-view.fxml` tetap berfungsi, tetapi warnanya kini mengikuti palet SONORA), `PROGRESS.md`, `PROGRESS_HANDOFF.md`.
+- Dipertahankan: `view/main-view.fxml` + `MainController` (referensi starter). `MainApp` masih memuat `main-view.fxml`.
+- Peringatan: FXML baru merujuk `fx:controller` yang belum ada → memuatnya sebelum STEP 7 akan gagal (`ClassNotFoundException`); itu perilaku yang diharapkan.
+
+**STEP 7 — main** (hanya Java; FXML/CSS/model/dao/service/`pom.xml`/DB tidak diubah):
+- Baru `util/`: `SessionManager`, `DateTimeUtil`, `CurrencyUtil`.
+- Baru `controller/`: `LandingController`, `LoginController`, `RegisterController`, `CustomerDashboardController`, `AdminDashboardController`, `Navigator` (public, helper navigasi minimal), `UiSupport` (package-private, helper tampilan).
+- Diubah: `MainApp.java` (membuka Landing lewat `Navigator`; satu Scene dipakai bersama).
+- Dipertahankan: `MainController` + `view/main-view.fxml` (referensi starter; tidak dimuat lagi oleh `MainApp`).
+- **Alasan `Navigator`/`UiSupport`:** navigasi 5 halaman + data sementara (jadwal pilihan Landing, pesan Login) dan kode tampilan berulang (pesan, kolom/lencana, parser harga) dibutuhkan semua controller; satu kelas statis kecil menghindari duplikasi tanpa membuat framework navigasi. Keduanya tanpa SQL/aturan bisnis.
 
 ## 3. Kontrak teknis yang wajib dipertahankan
-(Rincian lengkap: `docs/*`. Perubahan hanya lewat entri baru di `docs/DECISION_LOG.md`.)
+Java 21 · Maven `com.studiomusik:studio-musik-app:1.0.0-SNAPSHOT` · non-modular · UTF-8 · MySQL 8.0.16+ `studio_musik` · config `config/db.properties` (di-ignore Git). JavaFX/Connector-J/JUnit 21.0.5 / 8.4.0 / 5.10.2.
+Layer: `View → Controller → Service → DAO → MySQL`. DAO melempar `SQLException`; Service → `ServiceException` (unchecked; `ValidationException`, `BusinessRuleException` subclass). Service tanpa `javafx.*` dan tanpa SQL. Uang `BigDecimal` skala 2 `HALF_UP`. Password PBKDF2 `pbkdf2_sha256$600000$salt$hash` via `PasswordUtil`. Signature: `docs/API_CONTRACTS.md` §1–4 (tidak berubah).
+Tabel (6) dan seed: customer 1–6 (email `*@example.com`), room 1–5 (5 = MAINTENANCE), instrument 1–7 (7 = MAINTENANCE), booking 1–7, booking_instrument 1–12 (booking 1 & 6 milik customer 1). Password demo tidak ada di repo (D-024).
+Aturan bisnis BR-01…BR-22 dan asumsi A-01…A-11: `docs/FINAL_SPECIFICATION.md`.
 
-**Proyek:** Java 21 · Maven `com.studiomusik:studio-musik-app:1.0.0-SNAPSHOT` · main class `com.studiomusik.MainApp` · non-modular (tanpa `module-info.java`) · UTF-8 · database `studio_musik` (MySQL 8.0.16+, InnoDB, utf8mb4) · config `config/db.properties` (di-ignore Git; templat `config/db.properties.example`, URL `jdbc:mysql://localhost:3306/studio_musik?...`).
-
-**Dependency (terbukti terunduh di build lokal 2026-11-19):** javafx-controls & javafx-fxml **21.0.5** · mysql-connector-j **8.4.0** (runtime) · junit-jupiter **5.10.2** (test) · maven-compiler-plugin 3.13.0 · maven-surefire-plugin 3.2.5 · javafx-maven-plugin 0.0.8.
-
-**Package:** `com.studiomusik` → `model`, `model.enums`, `dao`, `service`, `controller`, `util`. Resource: `src/main/resources/com/studiomusik/{view,css}`. Test: `src/test/java/com/studiomusik`.
-
-**Class (SUDAH diimplementasi di STEP 3; kontrak dikunci):** `Person` (abstract, `id,name,phone,email`, `abstract getRole()`), `Customer` (+`passwordHash`, role "Customer"), `Admin` (+`username`,`passwordHash`, phone/email null, role "Admin"), `Room(roomId,roomName,roomType,pricePerHour,status)`, `Instrument(instrumentId,name,type,rentalPrice,status)`, `BookingInstrument(bookingInstrumentId,bookingId,instrument,quantity,rentalPrice)`, `Booking(bookingId,customer,room,bookingDate,startTime,endTime,status,totalCost,createdAt,instruments)`. Uang = `BigDecimal`. Enum: `BookingStatus{PENDING,CONFIRMED,COMPLETED,CANCELLED}` (+`blocksSchedule()`, `canTransitionTo()`), `RoomStatus{AVAILABLE,MAINTENANCE}`, `InstrumentStatus{AVAILABLE,MAINTENANCE}`. Signature lengkap: `docs/API_CONTRACTS.md` §1 dan §1.4 (perilaku/konstruktor, D-029…D-034).
-
-**Perilaku model yang harus dipertahankan (STEP 3):** konstruktor lengkap untuk DAO pada `Room`, `Instrument`, `BookingInstrument`, `Booking`; `Booking(Customer, Room, date, start, end)` untuk booking baru (id 0, PENDING, total `0.00`); `id = 0` = belum disimpan · `BookingInstrument.rentalPrice` dan `.instrument` adalah `final` tanpa setter (snapshot BR-12), hanya `quantity` (≥ 1), `bookingInstrumentId`, `bookingId` yang bisa diubah · `Booking.getInstruments()` baca-saja; `setInstruments(List)` menyalin; `setBookingId` menyebar ke detail · `calculateDuration()` jam bulat, `IllegalStateException` bila waktu kosong/`end <= start`/menit ≠ 00 · `calculateTotalCost()` murni (tidak mengubah `totalCost`), pembulatan per komponen HALF_UP skala 2 · `addInstrument` menolak null, `quantity < 1`, alat MAINTENANCE, dan `instrumentId` duplikat (`IllegalArgumentException`); `removeInstrument` menolak id yang tidak ada · `BookingStatus.canTransitionTo` (status sama/`null` → `false`) · pelanggaran invariant: `IllegalArgumentException` / `IllegalStateException` / `NullPointerException` (Service yang menerjemahkan ke `ValidationException`/`BusinessRuleException`) · tidak ada `equals/hashCode/toString` (agar hash tidak bocor lewat `toString`).
-
-**Pembagian util:** STEP 4 = `DatabaseConnection`, `PasswordUtil`, 6 DAO · STEP 5 = `DateTimeUtil` + Service · STEP 6–7 = `CurrencyUtil`, `SessionManager` (D-035).
-
-**Tabel (6, SUDAH ada di database/schema.sql, sesuai kontrak tanpa perubahan):**
-`admin(admin_id, username UNIQUE, password_hash, name)` · `customer(customer_id, name, phone, email UNIQUE NOT NULL, password_hash)` · `room(room_id, name, type, price_per_hour, status)` · `instrument(instrument_id, name, type, rental_price, status)` · `booking(booking_id, customer_id FK RESTRICT, room_id FK RESTRICT, booking_date, start_time, end_time, status, total_cost, created_at)` · `booking_instrument(booking_instrument_id, booking_id FK CASCADE, instrument_id FK RESTRICT, quantity, rental_price, UNIQUE(booking_id,instrument_id))`.
-Constraint bernama: `pk_*`, `uq_admin_username`, `uq_customer_email`, `uq_booking_instrument_pair`, `fk_booking_customer`, `fk_booking_room`, `fk_bi_booking`, `fk_bi_instrument`, `chk_room_price`, `chk_instrument_price`, `chk_booking_time`, `chk_booking_total`, `chk_bi_quantity`, `chk_bi_price`, indeks `idx_booking_room_date_status(room_id, booking_date, status)`. Kolom uang `DECIMAL(10,2)`.
-
-**Method signature DAO/Service/Util:** `docs/API_CONTRACTS.md` §2–4 (termasuk CRUD `BookingInstrumentDAO` insert/insertAll/findByBookingId/updateQuantity/delete dan `BookingService.addInstrumentToBooking/getBookingInstruments/updateBookingInstrumentQuantity/removeInstrumentFromBooking`). Error: DAO `SQLException` → Service `ServiceException` (+`ValidationException`, `BusinessRuleException`, di package `service`).
-
-**Password:** `pbkdf2_sha256$<iterasi>$<saltBase64>$<hashBase64>`; PBKDF2WithHmacSHA256; salt 16 byte `SecureRandom`; kunci 256 bit; iterasi bawaan **600000** (D-023); `PasswordUtil` (STEP 4) wajib kompatibel dengan `database/tools/Pbkdf2HashGenerator.java` dan membaca iterasi dari string hash. Verifikasi memakai perbandingan waktu-konstan.
-
-**Aturan bisnis (ringkas):** PENDING & CONFIRMED memblokir jadwal; CANCELLED & COMPLETED tidak · overlap `existingStart < requestedEnd AND existingEnd > requestedStart` (berurutan boleh) · `end > start`, durasi jam bulat (A-05) · Room/Instrument MAINTENANCE tidak bisa dipakai · biaya ruangan = harga/jam × durasi; alat = quantity × harga per unit per sesi; total `BigDecimal` HALF_UP skala 2 · harga alat di-snapshot di `booking_instrument.rental_price` · booking baru PENDING; transisi PENDING→CONFIRMED/CANCELLED, CONFIRMED→COMPLETED/CANCELLED · satu transaksi untuk booking + detail alat; kunci baris room (`SELECT ... FOR UPDATE`) sebelum cek overlap · Customer hanya akses booking sendiri · tanggal lampau ditolak (BR-21) · tidak ada hapus booking permanen · hapus Room/Instrument/Customer yang dipakai booking ditolak (BR-22).
-
-**Data seed (kontrak data uji; ID eksplisit):** admin 1 (`admin`); customer 1–6 (email `*@example.com`, customer 6 tanpa booking); room 1–5 (Studio A 150000, Studio B 120000, Studio C 80000, Studio Rekaman 250000, Studio D 100000 MAINTENANCE tanpa booking); instrument 1–7 (instrument 7 MAINTENANCE tanpa booking; instrument 5 harga sekarang 10000); booking 1–7 dan booking_instrument 1–12 dengan skenario: booking 1 (A, 2026-12-01 10–12 CONFIRMED), 2 (12–14 PENDING, berurutan), 3 (10–12 CANCELLED), 4 (A, 2026-11-10 10–13 COMPLETED, snapshot alat 8000), 5 (Studio B 2026-12-02 15–18 PENDING, 4 alat), 6 (Studio C 2026-12-03 09–10 CONFIRMED), 7 (Studio Rekaman 2026-12-05 13–17 CANCELLED). Semua `total_cost` konsisten dengan rumus (diuji B06). **Password demo tidak ada di repository** (D-024); Admin login `admin`, Customer login memakai email; password disampaikan terpisah oleh tim.
-
-**Penomoran tahap:** 0 Spesifikasi · 1 Maven · 2 Database Schema & Seed · 3 Model & enum · 4 Util JDBC & DAO · 5 Service · 6 FXML & CSS · 7 Controller & navigasi · 8 Integrasi & pengujian · 9 README, screenshot, laporan, ZIP.
-
-
-## 4. Keputusan penting (ringkas; lengkap di Decision Log D-001…D-035)
-Dua aktor (Customer + Admin); `password_hash`; `customer.email` unik sebagai login; `BigDecimal` menggantikan `double`; method Class Diagram yang butuh DB direalisasikan di Service, bukan model (D-013); resource/config mengikuti master prompt (D-015); exception service di package `service` (D-017); PBKDF2 600000 iterasi tanpa dependency baru (D-018, D-023); kredensial demo tidak di repository (D-024); `schema.sql` idempotent, `seed.sql` hanya untuk tabel kosong, `reset.sql` hanya drop tabel (D-025); skrip verifikasi tambahan (D-026); tanggal seed tetap (D-027); **STEP 3:** konvensi exception model (D-029), pertahanan berlapis `addInstrument` (D-030), snapshot harga final (D-031), perilaku durasi/total (D-032), komposisi di memori (D-033), konstruktor tambahan tanpa `equals/hashCode/toString` (D-034), pembagian util per tahap (D-035).
+## 4. Perilaku Service yang dikunci pada STEP 5 (usulan D-040…; belum di Decision Log)
+- **Exception:** input kosong/format/rentang, id tidak ditemukan → `ValidationException`; pelanggaran aturan, login gagal, email duplikat, FK RESTRICT → `BusinessRuleException`; SQL/koneksi/tak terduga → `ServiceException` berpesan umum (detail hanya `java.util.logging`, cause tetap terpasang).
+- **Login:** pesan generik sama untuk akun tidak ada/password salah (`Username atau password salah.` / `Email atau password salah.`); verifikasi dummy menyamakan waktu. Input kosong → `ValidationException`. Objek `Admin`/`Customer` hasil Service **tanpa `passwordHash`** (semua method Auth/Customer).
+- **Validasi:** email trim+huruf kecil, regex dasar, ≤100; telepon: spasi/`-` dibuang, `+?` + 8–15 digit, ≤20; nama ≤100; password **8–128 karakter**; Room/Instrument nama & tipe ≤50, harga ≥0, ≤99.999.999,99, dibulatkan skala 2 HALF_UP. `addRoom/addInstrument` mengembalikan objek baru (argumen tidak diubah).
+- **Waktu:** urutan cek: null → `end > start` (BR-03) → jam bulat termasuk detik (BR-04) → tanggal ≥ hari ini (BR-21; hari ini diterima, jam lewat tidak dicek). Dilakukan **sebelum** akses DB. `DateTimeUtil` **tidak dipakai** (tidak ada di ZIP dan `util/` dilarang diubah); logika waktu privat di `BookingService`. Akibat: tidak ada slot sampai 24:00 (sesi terakhir berakhir 23:00).
+- **`isRoomAvailable`:** `false` hanya untuk overlap; Room MAINTENANCE → `BusinessRuleException`; room tidak ada → `ValidationException`.
+- **`createBooking`:** 1 transaksi; urutan: validasi → customer (koneksi terpisah) → `RoomDAO.findByIdForUpdate` → MAINTENANCE → `existsOverlap` → muat alat (tidak ada → Validation; MAINTENANCE → BusinessRule) → hitung total via `Booking.calculateTotalCost` → insert booking → `insertAll` (dilewati bila tanpa alat) → baca ulang → commit; exception apa pun → rollback.
+- **Status/detail:** `updateBookingStatus` dan CRUD detail mengunci room booking dulu (baca awal lewat koneksi terpisah agar snapshot InnoDB tidak basi), lalu membaca ulang booking. BR-19: hanya PENDING/CONFIRMED. Total dihitung ulang dengan `Booking.calculateTotalCost()` dari detail terbaru (snapshot harga alat tetap; `updateQuantity` tidak menyentuh snapshot).
+- **BR-16:** `getBookingForCustomer` memberi pesan sama untuk "tidak ada" dan "bukan milik" (`BusinessRuleException`). `getAllBookings/getBookingsByCustomer` **tanpa** detail alat; `getBookingDetail/getBookingForCustomer/getBookingInstruments` memuat detail. `getBookingStatusSummary` selalu memuat 4 status (EnumMap).
+- **BR-22:** hapus ditolak lewat error MySQL 1451/1217 (FK RESTRICT) → `BusinessRuleException`; pesan Room/Instrument menyarankan MAINTENANCE. Email duplikat (1062) pada balapan → `BusinessRuleException`.
+- `BookingService` punya konstruktor injeksi 5 DAO (dipakai tes rollback); Service lain juga punya konstruktor injeksi DAO.
 
 ## 5. Terbuka / perlu konfirmasi tim
-- **A-01** tarif alat per unit per sesi (ditetapkan master prompt, belum dikonfirmasi tim). **A-02** tidak ada stok alat (keterbatasan diterima; tulis di laporan). **A-03** pembatalan oleh Customer: tidak ada di v1. **A-04** tabel transisi status (diusulkan; sudah ditanam di `BookingStatus`). **A-05** durasi jam bulat (diusulkan; sudah ditanam di `Booking.calculateDuration`). Bila tim mengubah A-04/A-05, ubah enum/model dan tes melalui entri Decision Log baru.
-- `mvn clean test` lokal (79 tes) dan verifikasi MySQL lokal Windows (wajib sebelum STEP 4).
-- Screenshot starter dan konfirmasi tombol "Uji Interaksi" (lampiran laporan).
+- A-01 (tarif alat per unit per sesi), A-03 (pembatalan oleh Customer; tidak ada di v1), A-04 (tabel transisi), A-05 (durasi jam bulat) — default dokumen berlaku.
+- **Harga Room tidak di-snapshot** (skema tidak punya kolomnya): total yang dihitung ulang setelah ubah/hapus detail memakai harga Room *saat ini*, sehingga mengubah harga Room lalu mengedit detail booking lama ikut mengubah komponen ruangan. Sesuai rumus kontrak; alternatif (pertahankan komponen ruangan lama) bisa dipilih tim.
+- A-02 (tidak ada stok alat) tetap keterbatasan yang diterima.
+- **STEP 6 — keputusan GUI D-GUI-01…D-GUI-11 (usulan, lihat `docs/GUI_CONTRACT.md` §1; belum di Decision Log).** Terpenting: **D-GUI-01** — landing/katalog/cari jadwal tanpa login, tetapi submit booking wajib login/registrasi Customer (backend butuh `customerId`; tidak ada guest booking). Butuh konfirmasi tim/dosen karena menyimpang dari Spesifikasi GUI §8.1.
+- GUI: jam operasional, rentang jam "Cari Jadwal", data kontak studio, ukuran minimum jendela, varian "RENT"/"RENTAL" belum diputuskan (default di kontrak GUI).
+- Konflik D-035 vs rencana 4A: `DateTimeUtil/CurrencyUtil/SessionManager` kini dibuat di STEP 7 (hanya dipakai Controller; Service tetap memakai logika waktu privat).
 
-## 6. Hasil verifikasi aktual
+## 6. Hasil verifikasi aktual STEP 5
 | Item | Hasil |
 |---|---|
-| STEP 1 lokal (screenshot pengguna) | `mvn clean test`: 5 tes, 0 gagal (26.342 s); `mvn package`: BUILD SUCCESS, JAR terbentuk (21.224 s); `javafx:run` dilaporkan berhasil (tanpa bukti); tombol belum dikonfirmasi |
-| STEP 2 sandbox | MySQL `8.0.46-0ubuntu0.24.04.5`, mode strict. `verify_stage2.sql`: **57 LULUS, 0 GAGAL**; siklus reset → schema → seed lulus; AC-D01…D05 lulus (sandbox) |
-| STEP 3 `mvn clean test` di sandbox | **GAGAL karena jaringan** (`maven-clean-plugin:2.5` tidak dapat diunduh). Tidak ada hasil Maven |
-| STEP 3 javac | `javac --release 21 -Xlint:all` untuk model + enum + semua tes: exit 0, tanpa warning |
-| STEP 3 tes (JUnit console 5.10.1, bukan Maven) | **79 ditemukan, 79 berhasil, 0 gagal/dilewati/dibatalkan** (AppInfoTest 5, PersonHierarchyTest 8, BookingStatusTest 6, RoomTest 8, InstrumentTest 7, BookingInstrumentTest 8, BookingTest 28, OopConceptsTest 9) |
-| STEP 3 uji mutasi | 12 dari 13 mutasi membuat tes gagal; 1 mutan setara (penghapusan cek `quantity < 1` di `addInstrument`; konstruktor `BookingInstrument` menegakkan aturan sama) |
-| STEP 3 kemurnian model | Tidak ada `java.sql`/`javafx`/`jdbc`/`java.io`/`double`/`float` di package model; `javac` menolak `new Person(...)` |
-| `pom.xml`, `schema.sql`, `seed.sql`, `reset.sql` | Identik dengan ZIP STEP 2 |
-| AC-M01…AC-M05 | Lulus di sandbox; menunggu konfirmasi Maven lokal |
-| Belum diuji | `mvn clean test` lokal (79 tes); MySQL lokal Windows; koneksi JDBC dari Java; DAO/Service |
+| Kompilasi main (model+util+dao+service) | `javac -source 21 -Xlint:all`: bersih, 0 warning (JRE sandbox tanpa `ct.sym`, jadi `--release` tak tersedia) |
+| Kompilasi 8 kelas tes | Bersih terhadap **stub** JUnit (JUnit asli tidak tersedia di sandbox) |
+| `ServiceValidationTest` (11 tes, tanpa DB) | **11/11 lulus** lewat runner refleksi + stub assertion (bukan JUnit/Maven asli) |
+| Tes DB (65 tes: Auth, Customer, Room, Instrument, Booking, BookingInstrument, BookingTransaction) | **Belum dijalankan** (tidak ada MySQL/Maven di sandbox). Kebenarannya belum terbukti sampai `mvn clean test` lokal |
+| `mvn clean test` | **Belum dijalankan oleh Claude.** Harapan lokal: 110 + 76 = **186 tes**, 0 gagal; tes DB otomatis di-skip bila DB/seed tidak siap |
+| Kemurnian | Tidak ada `javafx`/SQL mentah di `service/`; semua DB lewat DAO + `DatabaseConnection` untuk transaksi |
 
-## 7. Error / pekerjaan belum selesai
-1. `mvn clean test` lokal (79 tes). 2. Verifikasi MySQL lokal. 3. Screenshot starter + konfirmasi tombol. 4. Konfirmasi A-01/A-03/A-04/A-05. 5. Seluruh STEP 4–9. 6. Pembaruan Use Case/Flow di laporan akhir sesuai D-001 dan D-013.
-Masalah yang ditemukan dan diperbaiki selama STEP 3: nama `TestData` cocok dengan pola `Test*.java` Surefire sehingga diganti `Fixtures`; tidak ada bug pada kode produksi yang ditemukan oleh tes.
+Peta AC → tes: R01/R02/R18 `ServiceValidationTest`; R03, R05–R09, R11, R12, R14 `BookingServiceTest`; R04, R10, R15, R16 `BookingInstrumentServiceTest` (+ validasi qty di `ServiceValidationTest`); R13 `BookingTransactionTest`; R17 `AuthServiceTest`; R19 `CustomerServiceTest`/`RoomServiceTest`/`InstrumentServiceTest`. AC-C01…C04 tercakup di `BookingInstrumentServiceTest`. Serialisasi pemesan bersamaan (D-019): `BookingServiceTest.concurrentRequestsForSameSlotYieldOneBooking`.
 
-## 8. Prompt lengkap untuk STEP 4 (Util JDBC & DAO)
+## 7. Pekerjaan belum selesai
+1. **Jalankan `mvn clean test` lokal** (MySQL aktif, `config/db.properties` terisi, DB dari `reset.sql → schema.sql → seed.sql`); laporkan jumlah tes/gagal/skip. Tes Service memakai data berawalan `svc-test-`/`SvcTest `/`svctest_` dan membersihkannya sendiri; tidak memakai `reset.sql`.
+2. Koordinator: sinkronkan `README.md`, `PROGRESS.md`, `docs/DECISION_LOG.md` (D-036…D-039 dari 4A/4B + usulan §4), `docs/ACCEPTANCE_CRITERIA.md` (status AC-R, AC-A01…A03) — tidak disentuh pada STEP 5 sesuai batasan.
+3. STEP 8–9: integrasi/perbaikan, README/screenshot/laporan/ZIP.
+4. Konfirmasi A-01/A-03/A-04/A-05; screenshot starter.
 
-Salin ke percakapan baru. Lampirkan: `PROGRESS_HANDOFF.md` dan ZIP proyek `studio-musik/` terbaru. Isi placeholder hasil lokal sebelum mengirim.
+## 8. Catatan untuk STEP 7
+Baca `docs/GUI_CONTRACT.md` (fx:id, handler, tipe, alur). Controller hanya memanggil Service (tanpa SQL/`Connection`); tangkap `ValidationException`/`BusinessRuleException` → tampilkan `getMessage()`; `ServiceException` biasa → pesan umum. Customer yang login tidak membawa hash. Pilihan ruangan: `RoomService.getBookableRooms()`; alat: `InstrumentService.getSelectableInstruments()`.
 
-```
-Anda adalah Software Architect dan Java Developer untuk proyek kuliah PBO "Sistem Pengelolaan Operasional Studio Musik" (Java 21, JavaFX, Maven, JDBC, MySQL 8.0+). Lanjutkan di workspace yang sudah ada; jangan membuat proyek baru atau mengubah struktur.
+## 9. Hasil verifikasi aktual STEP 6
+| Item | Hasil |
+|---|---|
+| Lima FXML | Well-formed (parser XML); tidak ada `fx:id` ganda per berkas; seluruh `fx:id`/handler terdaftar di `GUI_CONTRACT.md` (dihasilkan dari parsing FXML) |
+| Pemuatan FXML di JavaFX / tampilan visual | **Belum dicoba** (JavaFX tak tersedia di sandbox; controller belum ada). Kebenaran sintaks CSS JavaFX dan tampilan belum terbukti |
+| `mvn` | Tidak dijalankan (resource saja; tidak ada Java baru). Bila FXML/CSS bermasalah, galat muncul saat runtime STEP 7, bukan saat kompilasi |
+| Aset | Tidak ada foto/font lokal; hero = gradient; font = `"Poppins"`/`"Roboto"` dengan fallback default sistem |
 
-1. AUDIT WAJIB (sebelum membuat file)
-- Baca PROGRESS_HANDOFF.md, README.md, PROGRESS.md, lalu docs/FINAL_SPECIFICATION.md, DECISION_LOG.md (D-001…D-035), ARCHITECTURE_CONTRACT.md, API_CONTRACTS.md (§1, §1.4, §2, §3), DATABASE_CONTRACT.md, ACCEPTANCE_CRITERIA.md.
-- Periksa file aktual: model/enums, 7 class model, tes model, database/*.sql, config/db.properties.example. Jangan menganggap file ada hanya karena disebut handoff.
-- Hasil lokal saya (WAJIB diisi; bila kosong, anggap BELUM dilakukan):
-  - mvn clean test (harus 79 tes, 0 gagal): [TEMPEL]
-  - Verifikasi MySQL lokal (docs/STAGE2_VERIFICATION.md §7, harus LULUS | 57): [TEMPEL]
-  - Versi MySQL lokal: [..]; branch aktif: [..]
-- Jawaban tim: A-01 [..], A-03 [..], A-04 [..], A-05 [..] (kosong = default dokumen).
-- GERBANG: bila mvn clean test gagal ATAU verifikasi MySQL lokal gagal/belum dilakukan, JANGAN lanjut membuat DAO; bantu perbaiki dulu (verifikasi MySQL lokal bersifat wajib untuk tahap ini).
-- Jika ada konflik dokumen vs file aktual, laporkan lebih dulu dan catat entri BARU di DECISION_LOG.md (lanjutkan nomor setelah D-035).
+## 10. STEP 7 — perilaku Controller yang dikunci (usulan D-CTL-xx; belum di Decision Log)
+- **Navigasi:** `Navigator.showLanding/Login/Register/CustomerDashboard/AdminDashboard`; dashboard yang diminta tanpa peran yang sesuai dialihkan ke Login (guard ganda: `Navigator` + `initialize()` controller → `Platform.runLater(showLogin)`). `showLanding()` membuang jadwal pilihan yang belum terpakai.
+- **D-GUI-01:** slot jadwal dipilih di Landing → bila Customer login: dashboard tab Booking terisi (tanggal, jam, ruangan); bila belum login: `Navigator.setPendingPrefill` + Login (pesan info); Admin: peringatan (Admin tidak membuat booking). Setelah registrasi sukses → Login dengan pesan sukses.
+- **Login (D-GUI-05):** identifier berisi `@` → `loginCustomer`, selain itu `loginAdmin`. `SessionManager.login` mengosongkan `passwordHash`; password tidak disimpan di mana pun.
+- **Error:** `ValidationException`/`BusinessRuleException` → `getMessage()`; `ServiceException`/`RuntimeException` lain → "Terjadi kesalahan pada sistem. Silakan coba lagi." (detail di `java.util.logging`).
+- **Landing Cari Jadwal (D-GUI-04):** durasi 1–8 jam (default 2); untuk tiap ruangan AVAILABLE berjenis dipilih dan tiap jam mulai 00:00 s/d (23:00 − durasi) memanggil `BookingService.isRoomAvailable`; `BusinessRuleException` (ruangan jadi MAINTENANCE) dilewati, galat lain menghentikan pencarian. Berjalan sinkron di thread UI (≤ sekitar 5 ruangan × 22 jam kueri). Konstanta `FIRST_START_HOUR`/`LAST_END_HOUR` di `LandingController` dan `CustomerDashboardController` menunggu keputusan jam operasional.
+- **Customer:** ComboBox jam bulat 00:00–22:00 (mulai) / 01:00–23:00 (selesai); ruangan dari `getBookableRooms`, instrumen dari `getSelectableInstruments` (dimuat ulang saat tab Booking dibuka); instrumen sama digabung jumlahnya (maks 99, UX); estimasi via `estimateTotalCost`; sukses booking → form direset, Riwayat dimuat ulang, pesan memuat nomor/status/total; riwayat via `getBookingsByCustomer`, detail via `getBookingForCustomer` (BR-16).
+- **Admin:** ringkasan (`getBookingStatusSummary` + 3 `count*`); filter status di controller; pilihan status tujuan hanya yang lolos `BookingStatus.canTransitionTo`; tombol detail alat dinonaktifkan untuk status selain PENDING/CONFIRMED (UX, BR-19 tetap di Service); konfirmasi `Alert` untuk ubah status, hapus detail, dan hapus Customer/Ruangan/Instrumen; harga dibaca dengan pola `\d+([.,]\d{1,2})?` — "150.000" **ditolak** (agar tidak terbaca 150), pesan menyuruh menulis tanpa pemisah ribuan.
+- **Format:** `CurrencyUtil.formatRupiah` → `Rp 150.000` (sen hanya bila ≠ 0: `Rp 150.000,50`; `null` → `Rp 0`); `DateTimeUtil.formatDate` → `dd MMM yyyy` locale `id-ID`; `formatTime` → `HH:mm`; `hoursBetween` membuang menit; null → `IllegalArgumentException` (formatDate/Time → `-`).
+- **Hero:** `LandingController` memakai `/com/studiomusik/images/hero.jpg` bila ada; tidak ada aset → gradient. Pemuatan font belum dilakukan (tidak ada file TTF).
 
-2. KONTRAK YANG TIDAK BOLEH DIUBAH
-Package com.studiomusik (dao, util); nama class/method/signature pada API_CONTRACTS.md §2 (hanya DatabaseConnection dan PasswordUtil pada tahap ini) dan §3 (6 DAO); enam tabel dan kolom pada database/schema.sql; uang = BigDecimal (DECIMAL(10,2)); Java 21; non-modular; tanpa dependency baru; class model dan enum dari STEP 3 (jangan diubah tanpa alasan tercatat; bila DAO membutuhkan perubahan model, laporkan dulu).
+## 11. Hasil verifikasi aktual STEP 7
+| Item | Hasil |
+|---|---|
+| Kecocokan FXML ↔ controller | Skrip: 200 `fx:id` (33/7/9/59/92), 44 handler; **tidak ada** field/handler hilang atau berlebih; tipe field = tipe elemen FXML (0 ketidaksesuaian). Kontrak FXML tidak diubah |
+| Util baru + model | `javac -Xlint:all`: bersih, 0 warning |
+| Controller/Navigator/MainApp | Pemeriksaan sintaks `javac` tanpa JavaFX: tidak ada galat selain simbol `javafx.*` yang memang tidak tersedia di sandbox. **Kompilasi penuh, pemuatan FXML, dan tampilan belum terbukti** |
+| Kemurnian layer | Tidak ada `java.sql`/`Connection`/DAO/SQL di controller |
+| Tes | Tidak dijalankan dan tidak ada tes baru (sesuai instruksi; tim menguji sendiri) |
 
-3. TUGAS STEP 4 — buat file nyata
-A. util/DatabaseConnection: static Connection getConnection() throws SQLException; membaca config/db.properties relatif terhadap working directory (root proyek) — kunci db.url, db.username, db.password; pesan error jelas bila file tidak ada/kunci kosong/masih placeholder (GANTI_DENGAN_...); tidak menyimpan credential di source; tidak mencatat password ke log; memakai MySQL Connector/J dari classpath runtime.
-B. util/PasswordUtil: hash(String) dan verify(String, String) — format pbkdf2_sha256$iterasi$saltBase64$hashBase64, PBKDF2WithHmacSHA256, salt 16 byte SecureRandom, kunci 256 bit, iterasi bawaan 600000 (D-023), membaca iterasi dari string hash saat verify, perbandingan waktu-konstan (MessageDigest.isEqual), verify mengembalikan false (bukan exception) untuk format rusak. WAJIB kompatibel dua arah dengan database/tools/Pbkdf2HashGenerator.java (uji dengan vektor yang dibuat utilitas itu memakai password uji sementara — bukan password demo — dan uji bahwa hash baru dapat diverifikasi oleh `--verify`).
-C. Enam DAO sesuai API_CONTRACTS.md §3 (AdminDAO, CustomerDAO, RoomDAO, InstrumentDAO, BookingDAO, BookingInstrumentDAO), semua method persis seperti kontrak:
-   - JDBC dengan PreparedStatement saja (tanpa penyambungan string SQL dari input) dan try-with-resources untuk Connection/Statement/ResultSet.
-   - Method tanpa parameter Connection membuka/menutup koneksinya sendiri. Method dengan Connection dipakai dalam transaksi Service: tidak boleh commit/rollback/close koneksi itu dan tidak mengubah autoCommit.
-   - Pemetaan: ENUM database ↔ enum Java via name()/valueOf; DECIMAL ↔ BigDecimal (getBigDecimal, jangan double); DATE/TIME/DATETIME ↔ LocalDate/LocalTime/LocalDateTime; Admin.phone/email = null (D-005); kolom password_hash ↔ passwordHash.
-   - Booking hasil query: Customer dan Room terisi lewat JOIN (Customer tanpa passwordHash — isi null — agar hash tidak menyebar; catat di Decision Log); BookingDAO.findById/findAll/findByCustomerId tidak memuat detail alat (detail dimuat BookingInstrumentDAO.findByBookingId lalu Booking.setInstruments); urutan findAll: booking_date DESC, start_time DESC.
-   - BookingDAO.existsOverlap memakai query kontrak DATABASE_CONTRACT §4 (status IN ('PENDING','CONFIRMED'), start_time < :end AND end_time > :start); RoomDAO.findByIdForUpdate memakai SELECT ... FOR UPDATE.
-   - BookingInstrumentDAO.updateQuantity hanya mengubah quantity (rental_price snapshot tidak berubah, BR-12); findByBookingId JOIN booking_instrument ↔ instrument.
-   - DAO TIDAK berisi aturan bisnis (validasi, transisi status, otorisasi) dan tidak mengimpor javafx.*; SQLException dibiarkan naik (Service yang membungkusnya).
-   - Hapus entitas yang masih direferensikan harus berujung SQLException (FK RESTRICT); DAO tidak menelannya.
-D. Package-info dao/ dan util/ diperbarui (jangan menghapus fungsinya).
-
-4. UJI
-- Unit test PasswordUtil (murni, selalu berjalan; termasuk kompatibilitas dengan format utilitas dan penolakan hash rusak).
-- Tes integrasi DAO terhadap MySQL nyata memakai config/db.properties: HARUS di-skip otomatis (JUnit Assumptions) bila config/db.properties tidak ada atau database tidak terjangkau, agar mvn test tetap hijau di mesin tanpa database. Tes tulis harus aman terhadap data seed: bungkus dalam transaksi + rollback (gunakan overload dengan Connection) atau bersihkan baris uji pada blok finally dengan identitas unik (mis. email UUID). Cakup: pemetaan semua kolom dari seed (mis. booking 1, 4, 5; booking_instrument 5 dengan snapshot 8000.00), CRUD tiap DAO, CRUD many-to-many (insert/insertAll/findByBookingId JOIN/updateQuantity/delete), existsOverlap untuk kasus: sebagian, mengandung, identik, berurutan, CANCELLED, COMPLETED (seed STEP 2: Studio A 2026-12-01 dan lainnya), FK RESTRICT (hapus customer/room/instrument yang dipakai → SQLException), CASCADE (hapus booking menghapus detail — di dalam transaksi lalu rollback), UNIQUE (booking_id, instrument_id) duplikat → SQLException, dan pembacaan findByIdForUpdate.
-- Verifikasi di sandbox: MySQL 8.0.46 dapat dipasang lewat apt dan dijalankan (service mysql start); reset → schema → seed memakai database/*.sql. Maven Central TIDAK dapat diakses di sandbox, jadi Maven/Connector/J 8.4.0 tidak bisa diunduh; apt hanya menyediakan libmariadb-java 2.7.6 (driver MariaDB, URL jdbc:mariadb://). Bila dipakai untuk uji sanity SQL terhadap MySQL, nyatakan jelas bahwa itu BUKAN MySQL Connector/J dan BUKAN pengganti mvn test lokal. Jangan mengklaim "lulus" untuk sesuatu yang tidak dijalankan.
-- Buat docs/STAGE4_VERIFICATION.md: apa yang benar-benar dijalankan, jumlah tes/gagal/error, tes yang di-skip dan alasannya, instruksi mvn clean test lokal beserta cara menyiapkan config/db.properties dan database (reset → schema → seed), serta checklist.
-- Tandai bukti untuk AC-A01 (tidak ada SQL/java.sql di controller), AC-A02 (tidak ada javafx.* di model/dao/service), AC-A03 (semua SQL PreparedStatement + try-with-resources; sertakan hasil pencarian teks sebagai bukti) di docs/ACCEPTANCE_CRITERIA.md.
-
-5. BATASAN
-JANGAN membuat Service/exception service, DateTimeUtil, CurrencyUtil, SessionManager (D-035), controller, FXML baru, login/booking end-to-end, dan JANGAN mengubah pom.xml, database/schema.sql, seed.sql, reset.sql, atau class model/enum tanpa alasan teknis yang dicatat. Jangan membuat handoff tambahan. Jangan menyimpan password/credential asli di repository (config/db.properties tetap di-ignore Git). Pertahankan semua file STEP 0–3.
-
-6. PEMBARUAN
-README.md (status + cara menjalankan tes integrasi), PROGRESS.md, PROGRESS_HANDOFF.md (satu-satunya handoff hidup), docs/DECISION_LOG.md, docs/ACCEPTANCE_CRITERIA.md.
-
-7. LAPORAN AKHIR
-Daftar file dibuat/diubah; ringkasan DatabaseConnection, PasswordUtil, dan 6 DAO; hasil tes aktual (termasuk yang di-skip); apa yang belum berhasil/belum dijalankan; masalah terbuka; status STEP 4; akumulasi handoff STEP 0–4; prompt lengkap STEP 5 (Service). Berhenti setelah STEP 4; jangan mulai STEP 5.
-```
-
+## 12. Terbuka setelah STEP 7
+1. Kompilasi + jalankan aplikasi lokal; kemungkinan galat runtime FXML/CSS/controller baru muncul di sini (belum pernah dimuat).
+2. Sinkronkan dokumen: `GUI_CONTRACT.md` (status header, nama controller), `ARCHITECTURE_CONTRACT` §3, `DECISION_LOG.md` (D-GUI-01…11, D-CTL di §10), `README.md`.
+3. Tetap menunggu konfirmasi: D-GUI-01 (dosen/tim), jam operasional, data kontak studio, ukuran minimum jendela, A-01/A-03/A-04/A-05.
+4. Keterbatasan UX yang diketahui: pencarian jadwal sinkron; slot hari ini tidak menyaring jam yang sudah lewat (Service menerima hari ini); tidak ada pemuatan font; `main-view.fxml` tidak lagi dimuat.
